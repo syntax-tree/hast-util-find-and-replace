@@ -1,0 +1,67 @@
+{
+  "name": "hast-util-find-and-replace",
+  "version": "0.0.0",
+  "description": "Find and replace text in a HAST tree",
+  "license": "MIT",
+  "keywords": [
+    "hast",
+    "html",
+    "find",
+    "replace",
+    "util",
+    "utility"
+  ],
+  "repository": "https://github.com/wooorm/hast-util-find-and-replace",
+  "bugs": "https://github.com/wooorm/hast-util-find-and-replace/issues",
+  "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
+  "contributors": [
+    "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"
+  ],
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "escape-string-regexp": "^1.0.5",
+    "hast-util-is-element": "^1.0.0",
+    "isarray": "^2.0.1",
+    "unist-util-visit-parents": "^1.1.0"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "esmangle": "^1.0.1",
+    "hastscript": "^3.0.1",
+    "nyc": "^10.0.0",
+    "remark-cli": "^2.1.0",
+    "remark-preset-wooorm": "^1.0.0",
+    "tape": "^4.4.0",
+    "xo": "^0.17.0"
+  },
+  "scripts": {
+    "build-md": "remark . --quiet --frail --output",
+    "build-bundle": "browserify index.js --bare -s hastUtilFindAndReplace > hast-util-find-and-replace.js",
+    "build-mangle": "esmangle hast-util-find-and-replace.js > hast-util-find-and-replace.min.js",
+    "build": "npm run build-md && npm run build-bundle && npm run build-mangle",
+    "lint": "xo",
+    "test-api": "node test",
+    "test-coverage": "nyc --reporter lcov tape test.js",
+    "test": "npm run build && npm run lint && npm run test-coverage"
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "guard-for-in": "off"
+    },
+    "ignores": [
+      "hast-util-find-and-replace.js"
+    ]
+  },
+  "nyc": {
+    "check-coverage": true,
+    "lines": 100,
+    "functions": 100,
+    "branches": 100
+  },
+  "remarkConfig": {
+    "presets": "wooorm"
+  }
+}
