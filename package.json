@@ -11,8 +11,8 @@
     "util",
     "utility"
   ],
-  "repository": "https://github.com/wooorm/hast-util-find-and-replace",
-  "bugs": "https://github.com/wooorm/hast-util-find-and-replace/issues",
+  "repository": "https://github.com/syntax-tree/hast-util-find-and-replace",
+  "bugs": "https://github.com/syntax-tree/hast-util-find-and-replace/issues",
   "author": "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)",
   "contributors": [
     "Titus Wormer <tituswormer@gmail.com> (http://wooorm.com)"

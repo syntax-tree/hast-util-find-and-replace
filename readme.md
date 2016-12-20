@@ -102,13 +102,13 @@ The given, modified, tree.
 
 <!-- Definition -->
 
-[build-badge]: https://img.shields.io/travis/wooorm/hast-util-find-and-replace.svg
+[build-badge]: https://img.shields.io/travis/syntax-tree/hast-util-find-and-replace.svg
 
-[build-page]: https://travis-ci.org/wooorm/hast-util-find-and-replace
+[build-page]: https://travis-ci.org/syntax-tree/hast-util-find-and-replace
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/wooorm/hast-util-find-and-replace.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/hast-util-find-and-replace.svg
 
-[coverage-page]: https://codecov.io/github/wooorm/hast-util-find-and-replace?branch=master
+[coverage-page]: https://codecov.io/github/syntax-tree/hast-util-find-and-replace?branch=master
 
 [npm]: https://docs.npmjs.com/cli/install
 
@@ -116,6 +116,6 @@ The given, modified, tree.
 
 [author]: http://wooorm.com
 
-[hast]: https://github.com/wooorm/hast
+[hast]: https://github.com/syntax-tree/hast
 
-[node]: https://github.com/wooorm/hast#ast
+[node]: https://github.com/syntax-tree/hast#ast
