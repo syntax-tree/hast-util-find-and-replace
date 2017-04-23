@@ -34,8 +34,9 @@ function findAndReplace(tree, find, replace, options) {
 
     return handler;
 
-    function handler(node, pos, parent) {
+    function handler(node, parent) {
       var siblings = parent.children;
+      var pos = siblings.indexOf(node);
       var value = node.value;
       var find = pair[0];
       var replace = pair[1];
@@ -102,12 +103,10 @@ function findAndReplace(tree, find, replace, options) {
         node = nodes[index];
 
         if (node.type === 'text') {
-          subhandler(node, pos, parent);
+          subhandler(node, parent);
         } else {
           search(node, settings, subhandler);
         }
-
-        pos++;
       }
     }
   }
@@ -124,7 +123,6 @@ function search(tree, options, handler) {
   function visitor(node, parents) {
     var length = parents.length;
     var index = length;
-    var parent;
 
     while (index--) {
       if (is(parents[index], ignore)) {
@@ -132,8 +130,7 @@ function search(tree, options, handler) {
       }
     }
 
-    parent = parents[length - 1];
-    handler(node, parent.children.indexOf(node), parent);
+    handler(node, parents[length - 1]);
   }
 }
 

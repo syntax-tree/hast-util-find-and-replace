@@ -158,6 +158,47 @@ test('findAndReplace', function (t) {
     'should ignore from options'
   );
 
+  t.deepEqual(
+    findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
+      importance: function (match) {
+        return h('strong', match);
+      },
+      code: function (match) {
+        return h('code', match);
+      },
+      emphasis: function (match) {
+        return h('em', match);
+      }
+    }),
+    create(),
+    'should not be order-sensitive with strings'
+  );
+
+  t.deepEqual(
+    findAndReplace(h('p', 'Some emphasis, importance, and code.'), [
+      [
+        /importance/g,
+        function (match) {
+          return h('strong', match);
+        }
+      ],
+      [
+        /code/g,
+        function (match) {
+          return h('code', match);
+        }
+      ],
+      [
+        /emphasis/g,
+        function (match) {
+          return h('em', match);
+        }
+      ]
+    ]),
+    create(),
+    'should not be order-sensitive with regexes'
+  );
+
   t.end();
 });
 
