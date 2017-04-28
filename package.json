@@ -32,10 +32,10 @@
     "esmangle": "^1.0.1",
     "hastscript": "^3.0.1",
     "nyc": "^10.0.0",
-    "remark-cli": "^2.1.0",
-    "remark-preset-wooorm": "^1.0.0",
+    "remark-cli": "^3.0.0",
+    "remark-preset-wooorm": "^2.0.0",
     "tape": "^4.4.0",
-    "xo": "^0.17.0"
+    "xo": "^0.18.0"
   },
   "scripts": {
     "build-md": "remark . --quiet --frail --output",
@@ -49,7 +49,9 @@
   },
   "xo": {
     "space": true,
+    "esnext": false,
     "rules": {
+      "unicorn/prefer-type-error": "off",
       "guard-for-in": "off"
     },
     "ignores": [
@@ -63,6 +65,8 @@
     "branches": 100
   },
   "remarkConfig": {
-    "presets": "wooorm"
+    "plugins": [
+      "preset-wooorm"
+    ]
   }
 }
