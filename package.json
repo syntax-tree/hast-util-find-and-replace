@@ -1,6 +1,6 @@
 {
   "name": "hast-util-find-and-replace",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Find and replace text in a HAST tree",
   "license": "MIT",
   "keywords": [
