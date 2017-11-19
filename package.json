@@ -29,18 +29,18 @@
   },
   "devDependencies": {
     "browserify": "^14.0.0",
+    "esmangle": "^1.0.1",
     "hastscript": "^3.0.1",
     "nyc": "^11.0.0",
     "remark-cli": "^4.0.0",
     "remark-preset-wooorm": "^3.0.0",
     "tape": "^4.4.0",
-    "tinyify": "^2.3.0",
     "xo": "^0.18.0"
   },
   "scripts": {
     "build-md": "remark . --quiet --frail --output",
     "build-bundle": "browserify index.js --bare -s hastUtilFindAndReplace > hast-util-find-and-replace.js",
-    "build-mangle": "browserify index.js --bare -s hastUtilFindAndReplace -p tinyify > hast-util-find-and-replace.min.js",
+    "build-mangle": "esmangle hast-util-find-and-replace.js > hast-util-find-and-replace.min.js",
     "build": "npm run build-md && npm run build-bundle && npm run build-mangle",
     "lint": "xo",
     "test-api": "node test",
