@@ -1,111 +1,114 @@
-'use strict';
+'use strict'
 
-var array = require('isarray');
-var regexp = require('is-regex');
-var visit = require('unist-util-visit-parents');
-var is = require('hast-util-is-element');
-var escape = require('escape-string-regexp');
+var array = require('isarray')
+var regexp = require('is-regex')
+var visit = require('unist-util-visit-parents')
+var is = require('hast-util-is-element')
+var escape = require('escape-string-regexp')
 
-var IGNORE = ['title', 'script', 'style', 'svg', 'math'];
+var IGNORE = ['title', 'script', 'style', 'svg', 'math']
 
-module.exports = findAndReplace;
+module.exports = findAndReplace
 
-findAndReplace.ignore = IGNORE;
+findAndReplace.ignore = IGNORE
 
 function findAndReplace(tree, find, replace, options) {
-  var settings;
-  var schema;
+  var settings
+  var schema
 
   if (typeof find === 'string' || regexp(find)) {
-    schema = [[find, replace]];
+    schema = [[find, replace]]
   } else {
-    schema = find;
-    options = replace;
+    schema = find
+    options = replace
   }
 
-  settings = options || {};
+  settings = options || {}
 
-  search(tree, settings, handlerFactory(toPairs(schema)));
+  search(tree, settings, handlerFactory(toPairs(schema)))
 
-  return tree;
+  return tree
 
   function handlerFactory(pairs) {
-    var pair = pairs[0];
+    var pair = pairs[0]
 
-    return handler;
+    return handler
 
     function handler(node, parent) {
-      var siblings = parent.children;
-      var pos = siblings.indexOf(node);
-      var value = node.value;
-      var find = pair[0];
-      var replace = pair[1];
-      var lastIndex = 0;
-      var nodes = [];
-      var subvalue;
-      var index;
-      var length;
-      var match;
-      var subhandler;
+      var siblings = parent.children
+      var pos = siblings.indexOf(node)
+      var value = node.value
+      var find = pair[0]
+      var replace = pair[1]
+      var lastIndex = 0
+      var nodes = []
+      var subvalue
+      var index
+      var length
+      var match
+      var subhandler
 
-      find.lastIndex = 0;
+      find.lastIndex = 0
 
-      match = find.exec(value);
+      match = find.exec(value)
 
       while (match) {
-        index = match.index;
-        subvalue = value.slice(lastIndex, index);
+        index = match.index
+        subvalue = value.slice(lastIndex, index)
 
         if (subvalue) {
-          nodes.push({type: 'text', value: subvalue});
+          nodes.push({type: 'text', value: subvalue})
         }
 
-        subvalue = replace.apply(null, match);
+        subvalue = replace.apply(null, match)
 
         if (subvalue) {
           if (typeof subvalue === 'string') {
-            subvalue = {type: 'text', value: subvalue};
+            subvalue = {type: 'text', value: subvalue}
           }
 
-          nodes.push(subvalue);
+          nodes.push(subvalue)
         }
 
-        lastIndex = index + match[0].length;
+        lastIndex = index + match[0].length
 
         if (!find.global) {
-          break;
+          break
         }
 
-        match = find.exec(value);
+        match = find.exec(value)
       }
 
       if (index === undefined) {
-        nodes = [node];
+        nodes = [node]
       } else {
-        subvalue = value.slice(lastIndex);
+        subvalue = value.slice(lastIndex)
 
         if (subvalue) {
-          nodes.push({type: 'text', value: subvalue});
+          nodes.push({type: 'text', value: subvalue})
         }
 
-        parent.children = siblings.slice(0, pos).concat(nodes).concat(siblings.slice(pos + 1));
+        parent.children = siblings
+          .slice(0, pos)
+          .concat(nodes)
+          .concat(siblings.slice(pos + 1))
       }
 
       if (pairs.length <= 1) {
-        return;
+        return
       }
 
-      length = nodes.length;
-      index = -1;
-      subhandler = handlerFactory(pairs.slice(1));
+      length = nodes.length
+      index = -1
+      subhandler = handlerFactory(pairs.slice(1))
 
       while (++index < length) {
-        node = nodes[index];
+        node = nodes[index]
 
         if (node.type === 'text') {
-          subhandler(node, parent);
+          subhandler(node, parent)
         } else {
-          search(node, settings, subhandler);
+          search(node, settings, subhandler)
         }
       }
     }
@@ -113,61 +116,64 @@ function findAndReplace(tree, find, replace, options) {
 }
 
 function search(tree, options, handler) {
-  var ignore = options.ignore || IGNORE;
-  var result = [];
+  var ignore = options.ignore || IGNORE
+  var result = []
 
-  visit(tree, 'text', visitor);
+  visit(tree, 'text', visitor)
 
-  return result;
+  return result
 
   function visitor(node, parents) {
-    var length = parents.length;
-    var index = length;
+    var length = parents.length
+    var index = length
 
     while (index--) {
       if (is(parents[index], ignore)) {
-        return;
+        return
       }
     }
 
-    handler(node, parents[length - 1]);
+    handler(node, parents[length - 1])
   }
 }
 
 function toPairs(schema) {
-  var result = [];
-  var key;
-  var length;
-  var index;
+  var result = []
+  var key
+  var length
+  var index
 
   if (typeof schema !== 'object') {
-    throw new Error('Expected array or object as schema');
+    throw new Error('Expected array or object as schema')
   }
 
   if (array(schema)) {
-    length = schema.length;
-    index = -1;
+    length = schema.length
+    index = -1
 
     while (++index < length) {
-      result.push([toExpression(schema[index][0]), toFunction(schema[index][1])]);
+      result.push([
+        toExpression(schema[index][0]),
+        toFunction(schema[index][1])
+      ])
     }
   } else {
     for (key in schema) {
-      result.push([toExpression(key), toFunction(schema[key])]);
+      result.push([toExpression(key), toFunction(schema[key])])
     }
   }
 
-  return result;
+  return result
 }
 
 function toExpression(find) {
-  return typeof find === 'string' ? new RegExp(escape(find), 'g') : find;
+  return typeof find === 'string' ? new RegExp(escape(find), 'g') : find
 }
 
 function toFunction(replace) {
-  return typeof replace === 'function' ? replace : returner;
+  return typeof replace === 'function' ? replace : returner
 
   function returner() {
-    return replace;
+    return replace
   }
 }

@@ -13,9 +13,9 @@ npm install hast-util-find-and-replace
 ## Usage
 
 ```javascript
-var h = require('hastscript');
-var inspect = require('unist-util-inspect');
-var findAndReplace = require('hast-util-find-and-replace');
+var h = require('hastscript')
+var inspect = require('unist-util-inspect')
+var findAndReplace = require('hast-util-find-and-replace')
 
 var tree = h('p', [
   'Some ',
@@ -25,17 +25,19 @@ var tree = h('p', [
   ', and ',
   h('code', 'code'),
   '.'
-]);
+])
 
-findAndReplace(tree, 'and', 'or');
+findAndReplace(tree, 'and', 'or')
 
-findAndReplace(tree, {emphasis: 'em', importance: 'strong'});
+findAndReplace(tree, {emphasis: 'em', importance: 'strong'})
 
-findAndReplace(tree, {code: function ($0) {
-  return h('a', {href: '//example.com#' + $0}, $0);
-}});
+findAndReplace(tree, {
+  code: function($0) {
+    return h('a', {href: '//example.com#' + $0}, $0)
+  }
+})
 
-console.log(inspect(tree));
+console.log(inspect(tree))
 ```
 
 Yields:
