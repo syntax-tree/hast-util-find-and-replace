@@ -161,7 +161,7 @@ function toPairs(schema) {
 }
 
 function toExpression(find) {
-  return typeof find === 'string' ? RegExp(escape(find), 'g') : find;
+  return typeof find === 'string' ? new RegExp(escape(find), 'g') : find;
 }
 
 function toFunction(replace) {

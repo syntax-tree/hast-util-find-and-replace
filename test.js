@@ -2,7 +2,7 @@
 
 var test = require('tape');
 var h = require('hastscript');
-var findAndReplace = require('./');
+var findAndReplace = require('.');
 
 test('findAndReplace', function (t) {
   t.throws(
