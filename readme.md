@@ -88,11 +88,8 @@ are not supported.
     — Perform multiple find-and-replace’s.  When `Array`, each entry is a tuple
     (array) of a `find` and `replace`.  When `Object`, each key is a `find`
     (in string form) and each value is `replace`.
-*   `options` (`Object`, optional):
-
-    *   `ignore` (`Array`, default: `['title', 'script', 'style', 'svg',
-        'math']`)
-        — Tag-names of elements _not_ to search.
+*   `options.ignore` (`Array`, default: `['title', 'script', 'style', 'svg', 'math']`)
+    — Tag-names of elements _not_ to search.
 
 ###### Returns
 
