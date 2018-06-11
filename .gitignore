@@ -5,3 +5,4 @@ coverage/
 node_modules/
 hast-util-find-and-replace.js
 hast-util-find-and-replace.min.js
+yarn.lock
