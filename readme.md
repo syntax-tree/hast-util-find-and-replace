@@ -1,4 +1,9 @@
-# hast-util-find-and-replace [![Build Status][build-badge]][build-page] [![Coverage Status][coverage-badge]][coverage-page]
+# hast-util-find-and-replace
+
+[![Build][build-badge]][build]
+[![Coverage][coverage-badge]][coverage]
+[![Downloads][downloads-badge]][downloads]
+[![Chat][chat-badge]][chat]
 
 Find and replace text in a [HAST][] tree.
 
@@ -111,11 +116,19 @@ repository, organisation, or community you agree to abide by its terms.
 
 [build-badge]: https://img.shields.io/travis/syntax-tree/hast-util-find-and-replace.svg
 
-[build-page]: https://travis-ci.org/syntax-tree/hast-util-find-and-replace
+[build]: https://travis-ci.org/syntax-tree/hast-util-find-and-replace
 
 [coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/hast-util-find-and-replace.svg
 
-[coverage-page]: https://codecov.io/github/syntax-tree/hast-util-find-and-replace?branch=master
+[coverage]: https://codecov.io/github/syntax-tree/hast-util-find-and-replace
+
+[downloads-badge]: https://img.shields.io/npm/dm/hast-util-find-and-replace.svg
+
+[downloads]: https://www.npmjs.com/package/hast-util-find-and-replace
+
+[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+
+[chat]: https://spectrum.chat/unified/rehype
 
 [npm]: https://docs.npmjs.com/cli/install
 
