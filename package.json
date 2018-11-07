@@ -25,7 +25,7 @@
     "hast-util-is-element": "^1.0.0",
     "is-regex": "^1.0.3",
     "isarray": "^2.0.1",
-    "unist-util-visit-parents": "^1.1.0"
+    "unist-util-visit-parents": "^2.0.0"
   },
   "devDependencies": {
     "browserify": "^16.0.0",
