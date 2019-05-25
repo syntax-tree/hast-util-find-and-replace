@@ -94,7 +94,7 @@ are not supported.
     (array) of a `find` and `replace`.  When `Object`, each key is a `find`
     (in string form) and each value is `replace`.
 *   `options.ignore` (`Array`, default: `['title', 'script', 'style', 'svg', 'math']`)
-    — Tag-names of elements _not_ to search.
+    — Tag-names of elements *not* to search.
 
 ###### Returns
 
