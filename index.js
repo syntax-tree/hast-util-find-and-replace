@@ -6,11 +6,11 @@ var visit = require('unist-util-visit-parents')
 var is = require('hast-util-is-element')
 var escape = require('escape-string-regexp')
 
-var IGNORE = ['title', 'script', 'style', 'svg', 'math']
+var defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
 
 module.exports = findAndReplace
 
-findAndReplace.ignore = IGNORE
+findAndReplace.ignore = defaultIgnore
 
 function findAndReplace(tree, find, replace, options) {
   var settings
@@ -116,7 +116,7 @@ function findAndReplace(tree, find, replace, options) {
 }
 
 function search(tree, options, handler) {
-  var ignore = options.ignore || IGNORE
+  var ignore = options.ignore || defaultIgnore
   var result = []
 
   visit(tree, 'text', visitor)
