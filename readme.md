@@ -3,21 +3,24 @@
 [![Build][build-badge]][build]
 [![Coverage][coverage-badge]][coverage]
 [![Downloads][downloads-badge]][downloads]
+[![Size][size-badge]][size]
+[![Sponsors][sponsors-badge]][collective]
+[![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-Find and replace text in a [HAST][] tree.
+[**hast**][hast] utility to find and replace text in a [*tree*][tree].
 
-## Installation
+## Install
 
 [npm][]:
 
-```bash
+```sh
 npm install hast-util-find-and-replace
 ```
 
 ## Usage
 
-```javascript
+```js
 var h = require('hastscript')
 var inspect = require('unist-util-inspect')
 var findAndReplace = require('hast-util-find-and-replace')
@@ -68,9 +71,10 @@ element[9] [tagName="p"]
 
 ### `findAndReplace(tree, find[, replace][, options])`
 
-Find and replace text in a [HAST][] tree.
-The algorithm searches for complete values in text nodes.  Partial matches
-are not supported.
+Find and replace text in a [**hast**][hast] [*tree*][tree].
+The algorithm searches the tree in [*preorder*][preorder] for complete values
+in [`Text`][text] nodes.
+Partial matches are not supported.
 
 ###### Signatures
 
@@ -80,33 +84,40 @@ are not supported.
 ###### Parameters
 
 *   `tree` ([`Node`][node])
-    — HAST tree.
+    — [**hast**][hast] [*tree*][tree]
 *   `find` (`string` or `RegExp`)
-    — Value to find and remove.  When `string`, escaped and made into a global
-    `RegExp`.
+    — Value to find and remove.
+    When `string`, escaped and made into a global `RegExp`
 *   `replace` (`string` or `Function`)
-    — Value to insert.  When `string`, turned into a text node.  When
-    `Function`, invoked with the results of calling `RegExp.exec` as arguments,
-    in which case it can return a [`Node`][node] or a `string`, in which case
-    it’s wrapped in a text node.
+    — Value to insert.
+    When `string`, turned into a [`Text`][text] node.
+    When `Function`, invoked with the results of calling `RegExp.exec` as
+    arguments, in which case it can return a [`Node`][node] or a `string`, which
+    is in the latter case wrapped in a [`Text`][text] node
 *   `search` (`Object` or `Array`)
-    — Perform multiple find-and-replace’s.  When `Array`, each entry is a tuple
-    (array) of a `find` and `replace`.  When `Object`, each key is a `find`
-    (in string form) and each value is `replace`.
-*   `options.ignore` (`Array`, default: `['title', 'script', 'style', 'svg', 'math']`)
+    — Perform multiple find-and-replace’s.
+    When `Array`, each entry is a tuple (`Array`) of a `find` (at `0`) and
+    `replace` (at `1`).
+    When `Object`, each key is a `find` (in string form) and each value is a
+    `replace`
+*   `options.ignore` (`Array`, default: `['title', 'script', 'style', 'svg',
+    'math']`)
     — Tag-names of elements *not* to search.
+    This list can be accessed at `findAndReplace.ignore`
 
 ###### Returns
 
-The given, modified, tree.
+The given, modified, `tree`.
 
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/hast`][contributing] for ways to get
+See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
 started.
+See [`support.md`][support] for ways to get help.
 
-This organisation has a [Code of Conduct][coc].  By interacting with this
-repository, organisation, or community you agree to abide by its terms.
+This project has a [Code of Conduct][coc].
+By interacting with this repository, organisation, or community you agree to
+abide by its terms.
 
 ## License
 
@@ -126,9 +137,19 @@ repository, organisation, or community you agree to abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/hast-util-find-and-replace
 
+[size-badge]: https://img.shields.io/bundlephobia/minzip/hast-util-find-and-replace.svg
+
+[size]: https://bundlephobia.com/result?p=hast-util-find-and-replace
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[collective]: https://opencollective.com/unified
+
 [chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
 
-[chat]: https://spectrum.chat/unified/rehype
+[chat]: https://spectrum.chat/unified/syntax-tree
 
 [npm]: https://docs.npmjs.com/cli/install
 
@@ -136,10 +157,18 @@ repository, organisation, or community you agree to abide by its terms.
 
 [author]: https://wooorm.com
 
+[contributing]: https://github.com/syntax-tree/.github/blob/master/contributing.md
+
+[support]: https://github.com/syntax-tree/.github/blob/master/support.md
+
+[coc]: https://github.com/syntax-tree/.github/blob/master/code-of-conduct.md
+
 [hast]: https://github.com/syntax-tree/hast
 
-[node]: https://github.com/syntax-tree/hast#ast
+[node]: https://github.com/syntax-tree/hast#ndoes
 
-[contributing]: https://github.com/syntax-tree/hast/blob/master/contributing.md
+[tree]: https://github.com/syntax-tree/unist#tree
 
-[coc]: https://github.com/syntax-tree/hast/blob/master/code-of-conduct.md
+[preorder]: https://github.com/syntax-tree/unist#preorder
+
+[text]: https://github.com/syntax-tree/hast#text
