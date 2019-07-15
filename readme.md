@@ -109,6 +109,28 @@ Partial matches are not supported.
 
 The given, modified, `tree`.
 
+## Security
+
+Improper use of the `replace` can open you up to a
+[cross-site scripting (XSS)][xss] attack as the value of `replace` is injected
+into the syntax tree.
+The following example shows how a script is injected that runs when loaded in a
+browser.
+
+```js
+findAndReplace(h('p', 'This and that.'), 'and', function() {
+  return h('script', 'alert(1)')
+})
+```
+
+Yields:
+
+```html
+<p>This <script>alert(1)</script> that.</p>
+```
+
+Do not use user input in `replace` or use [`hast-util-santize`][sanitize].
+
 ## Contribute
 
 See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
@@ -172,3 +194,7 @@ abide by its terms.
 [preorder]: https://github.com/syntax-tree/unist#preorder
 
 [text]: https://github.com/syntax-tree/hast#text
+
+[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[sanitize]: https://github.com/syntax-tree/hast-util-sanitize

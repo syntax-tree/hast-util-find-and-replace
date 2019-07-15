@@ -204,6 +204,40 @@ test('findAndReplace', function(t) {
     'should not be order-sensitive with regexes'
   )
 
+  t.deepEqual(
+    findAndReplace(create(), 'and', 'alert(1)'),
+    h('p', [
+      'Some ',
+      h('em', 'emphasis'),
+      ', ',
+      h('strong', 'importance'),
+      ', ',
+      'alert(1)',
+      ' ',
+      h('code', 'code'),
+      '.'
+    ]),
+    'security: replacer as string (safe)'
+  )
+
+  t.deepEqual(
+    findAndReplace(create(), 'and', function() {
+      return h('script', 'alert(1)')
+    }),
+    h('p', [
+      'Some ',
+      h('em', 'emphasis'),
+      ', ',
+      h('strong', 'importance'),
+      ', ',
+      h('script', 'alert(1)'),
+      ' ',
+      h('code', 'code'),
+      '.'
+    ]),
+    'security: replacer as function (unsafe)'
+  )
+
   t.end()
 })
 
