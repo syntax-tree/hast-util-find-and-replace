@@ -29,8 +29,6 @@
   "dependencies": {
     "escape-string-regexp": "^2.0.0",
     "hast-util-is-element": "^1.0.0",
-    "is-regex": "^1.0.0",
-    "isarray": "^2.0.0",
     "unist-util-visit-parents": "^3.0.0"
   },
   "devDependencies": {

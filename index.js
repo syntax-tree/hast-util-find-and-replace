@@ -1,7 +1,5 @@
 'use strict'
 
-var array = require('isarray')
-var regexp = require('is-regex')
 var visit = require('unist-util-visit-parents')
 var is = require('hast-util-is-element')
 var escape = require('escape-string-regexp')
@@ -16,7 +14,10 @@ function findAndReplace(tree, find, replace, options) {
   var settings
   var schema
 
-  if (typeof find === 'string' || regexp(find)) {
+  if (
+    typeof find === 'string' ||
+    (find && typeof find.lastIndex === 'number')
+  ) {
     schema = [[find, replace]]
   } else {
     schema = find
@@ -147,7 +148,7 @@ function toPairs(schema) {
     throw new Error('Expected array or object as schema')
   }
 
-  if (array(schema)) {
+  if ('length' in schema) {
     length = schema.length
     index = -1
 
