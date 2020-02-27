@@ -1,15 +1,17 @@
 {
   "name": "hast-util-find-and-replace",
   "version": "2.0.0",
-  "description": "Find and replace text in a HAST tree",
+  "description": "hast utility to find and replace text in a tree",
   "license": "MIT",
   "keywords": [
+    "unist",
     "hast",
+    "hast-util",
+    "util",
+    "utility",
     "html",
     "find",
-    "replace",
-    "util",
-    "utility"
+    "replace"
   ],
   "repository": "syntax-tree/hast-util-find-and-replace",
   "bugs": "https://github.com/syntax-tree/hast-util-find-and-replace/issues",
