@@ -74,7 +74,10 @@ test('findAndReplace', function(t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), [['emphasis', '!!!'], ['importance', '???']]),
+    findAndReplace(create(), [
+      ['emphasis', '!!!'],
+      ['importance', '???']
+    ]),
     h('p', [
       'Some ',
       h('em', '!!!'),
