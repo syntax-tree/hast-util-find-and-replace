@@ -131,6 +131,13 @@ Yields:
 
 Do not use user input in `replace` or use [`hast-util-santize`][sanitize].
 
+## Related
+
+*   [`hast-util-select`](https://github.com/syntax-tree/hast-util-select)
+    — `querySelector`, `querySelectorAll`, and `matches`
+*   [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
+    — select unist nodes with CSS-like selectors
+
 ## Contribute
 
 See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
