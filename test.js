@@ -4,9 +4,9 @@ var test = require('tape')
 var h = require('hastscript')
 var findAndReplace = require('.')
 
-test('findAndReplace', function(t) {
+test('findAndReplace', function (t) {
   t.throws(
-    function() {
+    function () {
       findAndReplace(create(), true)
     },
     /^Error: Expected array or object as schema$/,
@@ -42,7 +42,7 @@ test('findAndReplace', function(t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), /em(\w+)is/, function($0, $1) {
+    findAndReplace(create(), /em(\w+)is/, function ($0, $1) {
       return '[' + $1 + ']'
     }),
     h('p', [
@@ -58,7 +58,7 @@ test('findAndReplace', function(t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), 'emphasis', function() {
+    findAndReplace(create(), 'emphasis', function () {
       return h('a', h('b', 'c'))
     }),
     h('p', [
@@ -122,7 +122,7 @@ test('findAndReplace', function(t) {
 
   t.deepEqual(
     findAndReplace(create(), {
-      emphasis: function() {
+      emphasis: function () {
         return h('a', 'importance')
       },
       importance: 'something else'
@@ -168,13 +168,13 @@ test('findAndReplace', function(t) {
 
   t.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
-      importance: function(match) {
+      importance: function (match) {
         return h('strong', match)
       },
-      code: function(match) {
+      code: function (match) {
         return h('code', match)
       },
-      emphasis: function(match) {
+      emphasis: function (match) {
         return h('em', match)
       }
     }),
@@ -186,19 +186,19 @@ test('findAndReplace', function(t) {
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), [
       [
         /importance/g,
-        function(match) {
+        function (match) {
           return h('strong', match)
         }
       ],
       [
         /code/g,
-        function(match) {
+        function (match) {
           return h('code', match)
         }
       ],
       [
         /emphasis/g,
-        function(match) {
+        function (match) {
           return h('em', match)
         }
       ]
@@ -224,7 +224,7 @@ test('findAndReplace', function(t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), 'and', function() {
+    findAndReplace(create(), 'and', function () {
       return h('script', 'alert(1)')
     }),
     h('p', [
