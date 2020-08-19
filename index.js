@@ -1,7 +1,7 @@
 'use strict'
 
 var visit = require('unist-util-visit-parents')
-var is = require('hast-util-is-element')
+var is = require('unist-util-is')
 var escape = require('escape-string-regexp')
 
 var defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
@@ -119,6 +119,14 @@ function findAndReplace(tree, find, replace, options) {
 function search(tree, options, handler) {
   var ignore = options.ignore || defaultIgnore
   var result = []
+  if (!Array.isArray(ignore)) {
+    ignore = [ignore]
+  }
+
+  ignore = ignore.map(function (x) {
+    if (typeof x === 'object') return x
+    return {tagName: x}
+  })
 
   visit(tree, 'text', visitor)
 
