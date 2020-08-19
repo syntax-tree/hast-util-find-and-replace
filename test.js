@@ -167,6 +167,48 @@ test('findAndReplace', function (t) {
   )
 
   t.deepEqual(
+    findAndReplace(
+      h('p', [
+        h('span', 'visible text'),
+        h('span', {
+          text: 'hidden text',
+          style: 'font-size:1px;display:none;line-height:1px;'
+        })
+      ]),
+      'text',
+      'TEXT',
+      {
+        ignore: function (node) {
+          return /display:\s*none/.test(node.properties.style)
+        }
+      }
+    ),
+    h('p', [
+      h('span', ['visible ', 'TEXT']),
+      h('span', {
+        text: 'hidden text',
+        style: 'font-size:1px;display:none;line-height:1px;'
+      })
+    ]),
+    'should ignore using function'
+  )
+
+  t.deepEqual(
+    findAndReplace(
+      h('p', [h('span', 'text'), h('sup', 'text')]),
+      'text',
+      'TEXT',
+      {
+        ignore: {
+          tagName: 'sup'
+        }
+      }
+    ),
+    h('p', [h('span', 'TEXT'), h('sup', 'text')]),
+    'should ignore using objects'
+  )
+
+  t.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
       importance: function (match) {
         return h('strong', match)

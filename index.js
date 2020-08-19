@@ -124,7 +124,7 @@ function search(tree, options, handler) {
   }
 
   ignore = ignore.map(function (x) {
-    if (typeof x === 'object') return x
+    if (typeof x !== 'string') return x
     return {tagName: x}
   })
 
