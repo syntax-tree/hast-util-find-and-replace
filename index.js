@@ -1,7 +1,7 @@
 'use strict'
 
 var visit = require('unist-util-visit-parents')
-var is = require('hast-util-is-element')
+var convert = require('hast-util-is-element/convert')
 var escape = require('escape-string-regexp')
 
 var defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
@@ -117,7 +117,7 @@ function findAndReplace(tree, find, replace, options) {
 }
 
 function search(tree, options, handler) {
-  var ignore = options.ignore || defaultIgnore
+  var ignored = convert(options.ignore || defaultIgnore)
   var result = []
 
   visit(tree, 'text', visitor)
@@ -126,15 +126,27 @@ function search(tree, options, handler) {
 
   function visitor(node, parents) {
     var length = parents.length
-    var index = length
+    var index = -1
+    var parent
+    var grandparent
 
-    while (index--) {
-      if (is(parents[index], ignore)) {
+    while (++index < length) {
+      parent = parents[index]
+
+      if (
+        ignored(
+          parent,
+          grandparent ? grandparent.children.indexOf(parent) : undefined,
+          grandparent
+        )
+      ) {
         return
       }
+
+      grandparent = parent
     }
 
-    handler(node, parents[length - 1])
+    handler(node, grandparent)
   }
 }
 

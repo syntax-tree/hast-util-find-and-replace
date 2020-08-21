@@ -100,10 +100,10 @@ Partial matches are not supported.
     `replace` (at `1`).
     When `Object`, each key is a `find` (in string form) and each value is a
     `replace`
-*   `options.ignore` (`Array`, default: `['title', 'script', 'style', 'svg',
+*   `options.ignore` (`Test`, default: `['title', 'script', 'style', 'svg',
     'math']`)
-    — Tag-names of elements *not* to search.
-    This list can be accessed at `findAndReplace.ignore`
+    — Any [`hast-util-is-element`][test] compatible test.
+    The default list can be accessed at `findAndReplace.ignore`
 
 ###### Returns
 
@@ -205,3 +205,5 @@ abide by its terms.
 [xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
 
 [sanitize]: https://github.com/syntax-tree/hast-util-sanitize
+
+[test]: https://github.com/syntax-tree/hast-util-is-element#api
