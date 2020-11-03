@@ -6,6 +6,8 @@ var escape = require('escape-string-regexp')
 
 var defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
 
+var splice = [].splice
+
 module.exports = findAndReplace
 
 findAndReplace.ignore = defaultIgnore
@@ -36,82 +38,78 @@ function findAndReplace(tree, find, replace, options) {
     return handler
 
     function handler(node, parent) {
-      var siblings = parent.children
-      var pos = siblings.indexOf(node)
-      var value = node.value
       var find = pair[0]
       var replace = pair[1]
-      var lastIndex = 0
       var nodes = []
-      var subvalue
-      var index
-      var length
+      var start = 0
+      var index = parent.children.indexOf(node)
+      var position
       var match
       var subhandler
+      var value
 
       find.lastIndex = 0
 
-      match = find.exec(value)
+      match = find.exec(node.value)
 
       while (match) {
-        index = match.index
-        subvalue = value.slice(lastIndex, index)
+        position = match.index
+        value = replace.apply(
+          null,
+          [].concat(match, {index: match.index, input: match.input})
+        )
 
-        if (subvalue) {
-          nodes.push({type: 'text', value: subvalue})
-        }
-
-        subvalue = replace.apply(null, match)
-
-        if (subvalue) {
-          if (typeof subvalue === 'string') {
-            subvalue = {type: 'text', value: subvalue}
+        if (value !== false) {
+          if (start !== position) {
+            nodes.push({type: 'text', value: node.value.slice(start, position)})
           }
 
-          nodes.push(subvalue)
-        }
+          if (typeof value === 'string' && value.length > 0) {
+            value = {type: 'text', value: value}
+          }
 
-        lastIndex = index + match[0].length
+          if (value) {
+            nodes.push(value)
+          }
+
+          start = position + match[0].length
+        }
 
         if (!find.global) {
           break
         }
 
-        match = find.exec(value)
+        match = find.exec(node.value)
       }
 
-      if (index === undefined) {
+      if (position === undefined) {
         nodes = [node]
+        index--
       } else {
-        subvalue = value.slice(lastIndex)
-
-        if (subvalue) {
-          nodes.push({type: 'text', value: subvalue})
+        if (start < node.value.length) {
+          nodes.push({type: 'text', value: node.value.slice(start)})
         }
 
-        parent.children = siblings
-          .slice(0, pos)
-          .concat(nodes)
-          .concat(siblings.slice(pos + 1))
+        nodes.unshift(index, 1)
+        splice.apply(parent.children, nodes)
       }
 
-      if (pairs.length <= 1) {
-        return
-      }
+      if (pairs.length > 1) {
+        subhandler = handlerFactory(pairs.slice(1))
+        position = -1
 
-      length = nodes.length
-      index = -1
-      subhandler = handlerFactory(pairs.slice(1))
+        while (++position < nodes.length) {
+          node = nodes[position]
 
-      while (++index < length) {
-        node = nodes[index]
-
-        if (node.type === 'text') {
-          subhandler(node, parent)
-        } else {
-          search(node, settings, subhandler)
+          if (node.type === 'text') {
+            subhandler(node, parent)
+          } else {
+            search(node, settings, subhandler)
+          }
         }
       }
+
+      return index + nodes.length + 1
     }
   }
 }
@@ -125,12 +123,11 @@ function search(tree, options, handler) {
   return result
 
   function visitor(node, parents) {
-    var length = parents.length
     var index = -1
     var parent
     var grandparent
 
-    while (++index < length) {
+    while (++index < parents.length) {
       parent = parents[index]
 
       if (
@@ -146,14 +143,13 @@ function search(tree, options, handler) {
       grandparent = parent
     }
 
-    handler(node, grandparent)
+    return handler(node, grandparent)
   }
 }
 
 function toPairs(schema) {
   var result = []
   var key
-  var length
   var index
 
   if (typeof schema !== 'object') {
@@ -161,10 +157,9 @@ function toPairs(schema) {
   }
 
   if ('length' in schema) {
-    length = schema.length
     index = -1
 
-    while (++index < length) {
+    while (++index < schema.length) {
       result.push([
         toExpression(schema[index][0]),
         toFunction(schema[index][1])

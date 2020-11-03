@@ -167,6 +167,12 @@ test('findAndReplace', function (t) {
   )
 
   t.deepEqual(
+    findAndReplace(create(), 'emphasis', () => false),
+    create(),
+    'should not replace when returning `false`'
+  )
+
+  t.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
       importance: function (match) {
         return h('strong', match)

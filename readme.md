@@ -91,11 +91,11 @@ Partial matches are not supported.
 *   `replace` (`string` or `Function`)
     — Value to insert.
     When `string`, turned into a [`Text`][text] node.
-    When `Function`, invoked with the results of calling `RegExp.exec` as
-    arguments, in which case it can return a [`Node`][node] or a `string`, which
-    is in the latter case wrapped in a [`Text`][text] node
+    When `Function`, called with the results of calling `RegExp.exec` as
+    arguments, in which case it can return a [`Node`][node] or a `string` (which
+    is wrapped in a [`Text`][text] node), or `false` to not replace
 *   `search` (`Object` or `Array`)
-    — Perform multiple find-and-replace’s.
+    — Perform multiple find-and-replaces.
     When `Array`, each entry is a tuple (`Array`) of a `find` (at `0`) and
     `replace` (at `1`).
     When `Object`, each key is a `find` (in string form) and each value is a
