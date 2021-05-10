@@ -1,43 +1,110 @@
+/**
+ * @typedef Options
+ * @property {Test} [ignore]
+ *
+ * @typedef {import('hast').Text} Text
+ * @typedef {import('hast').Parent} Parent
+ * @typedef {import('hast').Root} Root
+ * @typedef {import('hast').Element['children'][number]} Content
+ * @typedef {Parent['children'][number]|Root} Node
+ *
+ * @typedef {import('hast-util-is-element').Test} Test
+ * @typedef {import('unist-util-visit-parents').VisitorResult} VisitorResult
+ *
+ * @typedef RegExpMatchObject
+ * @property {number} index
+ * @property {string} input
+ *
+ * @typedef {string|RegExp} Find
+ * @typedef {string|ReplaceFunction} Replace
+ *
+ * @typedef {[Find, Replace]} FindAndReplaceTuple
+ * @typedef {Object.<string, Replace>} FindAndReplaceSchema
+ * @typedef {Array.<FindAndReplaceTuple>} FindAndReplaceList
+ *
+ * @typedef {[RegExp, ReplaceFunction]} Pair
+ * @typedef {Array.<Pair>} Pairs
+ */
+
+/**
+ * @callback Handler
+ * @param {Text} node
+ * @param {Parent} parent
+ * @returns {VisitorResult}
+ */
+
+/**
+ * @callback ReplaceFunction
+ * @param {...unknown} parameters
+ * @returns {Array.<Content>|Content|string|false|undefined|null}
+ */
+
 import {visitParents} from 'unist-util-visit-parents'
 import {convertElement} from 'hast-util-is-element'
 import escape from 'escape-string-regexp'
 
-var splice = [].splice
 var own = {}.hasOwnProperty
 
 export const defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
 
+/**
+ * @param {Node} tree
+ * @param {Find|FindAndReplaceSchema|FindAndReplaceList} find
+ * @param {Replace|Options} [replace]
+ * @param {Options} [options]
+ */
 export function findAndReplace(tree, find, replace, options) {
+  /** @type {Options} */
   var settings
+  /** @type {FindAndReplaceSchema|FindAndReplaceList} */
   var schema
 
-  if (typeof find === 'string' || (find && typeof find.exec === 'function')) {
+  if (typeof find === 'string' || find instanceof RegExp) {
+    // @ts-expect-error don’t expect options twice.
     schema = [[find, replace]]
+    settings = options
   } else {
     schema = find
-    options = replace
+    // @ts-expect-error don’t expect replace twice.
+    settings = replace
   }
 
-  settings = options || {}
+  if (!settings) {
+    settings = {}
+  }
 
   search(tree, settings, handlerFactory(toPairs(schema)))
 
   return tree
 
+  /**
+   * @param {Pairs} pairs
+   * @returns {Handler}
+   */
   function handlerFactory(pairs) {
     var pair = pairs[0]
 
     return handler
 
+    /**
+     * @type {Handler}
+     */
     function handler(node, parent) {
       var find = pair[0]
       var replace = pair[1]
+      /** @type {Array.<Content>} */
       var nodes = []
       var start = 0
       var index = parent.children.indexOf(node)
+      /** @type {number} */
       var position
+      /** @type {RegExpMatchArray} */
       var match
+      /** @type {Handler} */
       var subhandler
+      /** @type {Content} */
+      var child
+      /** @type {Array.<Content>|Content|string|false|undefined|null} */
       var value
 
       find.lastIndex = 0
@@ -46,19 +113,20 @@ export function findAndReplace(tree, find, replace, options) {
 
       while (match) {
         position = match.index
+        // @ts-expect-error this is perfectly fine, typescript.
         value = replace(...match, {index: match.index, input: match.input})
+
+        if (typeof value === 'string' && value.length > 0) {
+          value = {type: 'text', value}
+        }
 
         if (value !== false) {
           if (start !== position) {
             nodes.push({type: 'text', value: node.value.slice(start, position)})
           }
 
-          if (typeof value === 'string' && value.length > 0) {
-            value = {type: 'text', value}
-          }
-
           if (value) {
-            nodes.push(value)
+            nodes = [].concat(nodes, value)
           }
 
           start = position + match[0].length
@@ -79,8 +147,9 @@ export function findAndReplace(tree, find, replace, options) {
           nodes.push({type: 'text', value: node.value.slice(start)})
         }
 
-        nodes.unshift(index, 1)
-        splice.apply(parent.children, nodes)
+        // @ts-expect-error This is a bug!
+        nodes = [index, 1, ...nodes]
+        ;[].splice.call(parent.children, ...nodes)
       }
 
       if (pairs.length > 1) {
@@ -88,12 +157,12 @@ export function findAndReplace(tree, find, replace, options) {
         position = -1
 
         while (++position < nodes.length) {
-          node = nodes[position]
+          child = nodes[position]
 
-          if (node.type === 'text') {
-            subhandler(node, parent)
+          if (child.type === 'text') {
+            subhandler(child, parent)
           } else {
-            search(node, settings, subhandler)
+            search(child, settings, subhandler)
           }
         }
       }
@@ -103,25 +172,33 @@ export function findAndReplace(tree, find, replace, options) {
   }
 }
 
+/**
+ * @param {Node} tree
+ * @param {Options} options
+ * @param {Handler} handler
+ * @returns {void}
+ */
 function search(tree, options, handler) {
   var ignored = convertElement(options.ignore || defaultIgnore)
-  var result = []
 
   visitParents(tree, 'text', visitor)
 
-  return result
-
+  /** @type {import('unist-util-visit-parents').Visitor<Text>} */
   function visitor(node, parents) {
     var index = -1
+    /** @type {Parent} */
     var parent
+    /** @type {Parent} */
     var grandparent
 
     while (++index < parents.length) {
+      // @ts-expect-error hast vs. unist parent.
       parent = parents[index]
 
       if (
         ignored(
           parent,
+          // @ts-expect-error hast vs. unist parent.
           grandparent ? grandparent.children.indexOf(parent) : undefined,
           grandparent
         )
@@ -136,18 +213,22 @@ function search(tree, options, handler) {
   }
 }
 
+/**
+ * @param {FindAndReplaceSchema|FindAndReplaceList} schema
+ * @returns {Pairs}
+ */
 function toPairs(schema) {
+  var index = -1
+  /** @type {Pairs} */
   var result = []
+  /** @type {string} */
   var key
-  var index
 
   if (typeof schema !== 'object') {
     throw new TypeError('Expected array or object as schema')
   }
 
-  if ('length' in schema) {
-    index = -1
-
+  if (Array.isArray(schema)) {
     while (++index < schema.length) {
       result.push([
         toExpression(schema[index][0]),
@@ -165,14 +246,24 @@ function toPairs(schema) {
   return result
 }
 
+/**
+ * @param {Find} find
+ * @returns {RegExp}
+ */
 function toExpression(find) {
   return typeof find === 'string' ? new RegExp(escape(find), 'g') : find
 }
 
+/**
+ * @param {Replace} replace
+ * @returns {ReplaceFunction}
+ */
 function toFunction(replace) {
   return typeof replace === 'function' ? replace : returner
 
+  /** @type {ReplaceFunction} */
   function returner() {
+    // @ts-expect-error it’s a string.
     return replace
   }
 }

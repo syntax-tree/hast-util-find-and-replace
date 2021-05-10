@@ -5,6 +5,7 @@ import {findAndReplace} from './index.js'
 test('findAndReplace', function (t) {
   t.throws(
     function () {
+      // @ts-expect-error runtime.
       findAndReplace(create(), true)
     },
     /^TypeError: Expected array or object as schema$/,
@@ -40,9 +41,13 @@ test('findAndReplace', function (t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), /em(\w+)is/, function ($0, $1) {
-      return '[' + $1 + ']'
-    }),
+    findAndReplace(
+      create(),
+      /em(\w+)is/,
+      function (/** @type {string} */ _, /** @type {string} */ $1) {
+        return '[' + $1 + ']'
+      }
+    ),
     h('p', [
       'Some ',
       h('em', '[phas]'),
@@ -172,13 +177,13 @@ test('findAndReplace', function (t) {
 
   t.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
-      importance(match) {
+      importance(/** @type {string} */ match) {
         return h('strong', match)
       },
-      code(match) {
+      code(/** @type {string} */ match) {
         return h('code', match)
       },
-      emphasis(match) {
+      emphasis(/** @type {string} */ match) {
         return h('em', match)
       }
     }),
@@ -190,19 +195,19 @@ test('findAndReplace', function (t) {
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), [
       [
         /importance/g,
-        function (match) {
+        function (/** @type {string} */ match) {
           return h('strong', match)
         }
       ],
       [
         /code/g,
-        function (match) {
+        function (/** @type {string} */ match) {
           return h('code', match)
         }
       ],
       [
         /emphasis/g,
-        function (match) {
+        function (/** @type {string} */ match) {
           return h('em', match)
         }
       ]
