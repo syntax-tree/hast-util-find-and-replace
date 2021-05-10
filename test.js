@@ -1,15 +1,13 @@
-'use strict'
-
-var test = require('tape')
-var h = require('hastscript')
-var findAndReplace = require('.')
+import test from 'tape'
+import {h} from 'hastscript'
+import {findAndReplace} from './index.js'
 
 test('findAndReplace', function (t) {
   t.throws(
     function () {
       findAndReplace(create(), true)
     },
-    /^Error: Expected array or object as schema$/,
+    /^TypeError: Expected array or object as schema$/,
     'should throw on invalid search and replaces'
   )
 
@@ -122,7 +120,7 @@ test('findAndReplace', function (t) {
 
   t.deepEqual(
     findAndReplace(create(), {
-      emphasis: function () {
+      emphasis() {
         return h('a', 'importance')
       },
       importance: 'something else'
@@ -174,13 +172,13 @@ test('findAndReplace', function (t) {
 
   t.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
-      importance: function (match) {
+      importance(match) {
         return h('strong', match)
       },
-      code: function (match) {
+      code(match) {
         return h('code', match)
       },
-      emphasis: function (match) {
+      emphasis(match) {
         return h('em', match)
       }
     }),

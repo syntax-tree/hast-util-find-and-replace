@@ -1,18 +1,13 @@
-'use strict'
-
-var visit = require('unist-util-visit-parents')
-var convert = require('hast-util-is-element/convert')
-var escape = require('escape-string-regexp')
-
-var defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
+import {visitParents} from 'unist-util-visit-parents'
+import {convertElement} from 'hast-util-is-element'
+import escape from 'escape-string-regexp'
 
 var splice = [].splice
+var own = {}.hasOwnProperty
 
-module.exports = findAndReplace
+export const defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
 
-findAndReplace.ignore = defaultIgnore
-
-function findAndReplace(tree, find, replace, options) {
+export function findAndReplace(tree, find, replace, options) {
   var settings
   var schema
 
@@ -51,10 +46,7 @@ function findAndReplace(tree, find, replace, options) {
 
       while (match) {
         position = match.index
-        value = replace.apply(
-          null,
-          [].concat(match, {index: match.index, input: match.input})
-        )
+        value = replace(...match, {index: match.index, input: match.input})
 
         if (value !== false) {
           if (start !== position) {
@@ -62,7 +54,7 @@ function findAndReplace(tree, find, replace, options) {
           }
 
           if (typeof value === 'string' && value.length > 0) {
-            value = {type: 'text', value: value}
+            value = {type: 'text', value}
           }
 
           if (value) {
@@ -112,10 +104,10 @@ function findAndReplace(tree, find, replace, options) {
 }
 
 function search(tree, options, handler) {
-  var ignored = convert(options.ignore || defaultIgnore)
+  var ignored = convertElement(options.ignore || defaultIgnore)
   var result = []
 
-  visit(tree, 'text', visitor)
+  visitParents(tree, 'text', visitor)
 
   return result
 
@@ -150,7 +142,7 @@ function toPairs(schema) {
   var index
 
   if (typeof schema !== 'object') {
-    throw new Error('Expected array or object as schema')
+    throw new TypeError('Expected array or object as schema')
   }
 
   if ('length' in schema) {
@@ -164,7 +156,9 @@ function toPairs(schema) {
     }
   } else {
     for (key in schema) {
-      result.push([toExpression(key), toFunction(schema[key])])
+      if (own.call(schema, key)) {
+        result.push([toExpression(key), toFunction(schema[key])])
+      }
     }
   }
 

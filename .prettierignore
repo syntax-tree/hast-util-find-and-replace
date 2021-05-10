@@ -1,5 +1,2 @@
 coverage/
-hast-util-find-and-replace.js
-hast-util-find-and-replace.min.js
-*.json
 *.md

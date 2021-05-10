@@ -12,6 +12,9 @@
 
 ## Install
 
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
+Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
+
 [npm][]:
 
 ```sh
@@ -21,9 +24,9 @@ npm install hast-util-find-and-replace
 ## Use
 
 ```js
-var h = require('hastscript')
-var inspect = require('unist-util-inspect')
-var findAndReplace = require('hast-util-find-and-replace')
+import {h} from 'hastscript'
+import {inspect} from 'unist-util-inspect'
+import {findAndReplace} from 'hast-util-find-and-replace'
 
 var tree = h('p', [
   'Some ',
@@ -69,6 +72,9 @@ element[9] [tagName="p"]
 
 ## API
 
+This package exports the following identifiers: `findAndReplace`, `defaultIgnore`.
+There is no default export.
+
 ### `findAndReplace(tree, find[, replace][, options])`
 
 Find and replace text in a [**hast**][hast] [*tree*][tree].
@@ -103,7 +109,7 @@ Partial matches are not supported.
 *   `options.ignore` (`Test`, default: `['title', 'script', 'style', 'svg',
     'math']`)
     — Any [`hast-util-is-element`][test] compatible test.
-    The default list can be accessed at `findAndReplace.ignore`
+    The default list is exported as `defaultIgnore`
 
 ###### Returns
 
