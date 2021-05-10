@@ -27,13 +27,6 @@
  */
 
 /**
- * @callback Handler
- * @param {Text} node
- * @param {Parent} parent
- * @returns {VisitorResult}
- */
-
-/**
  * @callback ReplaceFunction
  * @param {...unknown} parameters
  * @returns {Array.<Content>|Content|string|false|undefined|null}
@@ -73,115 +66,15 @@ export function findAndReplace(tree, find, replace, options) {
     settings = {}
   }
 
-  search(tree, settings, handlerFactory(toPairs(schema)))
+  var ignored = convertElement(settings.ignore || defaultIgnore)
+  var pairs = toPairs(schema)
+  var pairIndex = -1
+
+  while (++pairIndex < pairs.length) {
+    visitParents(tree, 'text', visitor)
+  }
 
   return tree
-
-  /**
-   * @param {Pairs} pairs
-   * @returns {Handler}
-   */
-  function handlerFactory(pairs) {
-    var pair = pairs[0]
-
-    return handler
-
-    /**
-     * @type {Handler}
-     */
-    function handler(node, parent) {
-      var find = pair[0]
-      var replace = pair[1]
-      /** @type {Array.<Content>} */
-      var nodes = []
-      var start = 0
-      var index = parent.children.indexOf(node)
-      /** @type {number} */
-      var position
-      /** @type {RegExpMatchArray} */
-      var match
-      /** @type {Handler} */
-      var subhandler
-      /** @type {Content} */
-      var child
-      /** @type {Array.<Content>|Content|string|false|undefined|null} */
-      var value
-
-      find.lastIndex = 0
-
-      match = find.exec(node.value)
-
-      while (match) {
-        position = match.index
-        // @ts-expect-error this is perfectly fine, typescript.
-        value = replace(...match, {index: match.index, input: match.input})
-
-        if (typeof value === 'string' && value.length > 0) {
-          value = {type: 'text', value}
-        }
-
-        if (value !== false) {
-          if (start !== position) {
-            nodes.push({type: 'text', value: node.value.slice(start, position)})
-          }
-
-          if (value) {
-            nodes = [].concat(nodes, value)
-          }
-
-          start = position + match[0].length
-        }
-
-        if (!find.global) {
-          break
-        }
-
-        match = find.exec(node.value)
-      }
-
-      if (position === undefined) {
-        nodes = [node]
-        index--
-      } else {
-        if (start < node.value.length) {
-          nodes.push({type: 'text', value: node.value.slice(start)})
-        }
-
-        // @ts-expect-error This is a bug!
-        nodes = [index, 1, ...nodes]
-        ;[].splice.call(parent.children, ...nodes)
-      }
-
-      if (pairs.length > 1) {
-        subhandler = handlerFactory(pairs.slice(1))
-        position = -1
-
-        while (++position < nodes.length) {
-          child = nodes[position]
-
-          if (child.type === 'text') {
-            subhandler(child, parent)
-          } else {
-            search(child, settings, subhandler)
-          }
-        }
-      }
-
-      return index + nodes.length + 1
-    }
-  }
-}
-
-/**
- * @param {Node} tree
- * @param {Options} options
- * @param {Handler} handler
- * @returns {void}
- */
-function search(tree, options, handler) {
-  var ignored = convertElement(options.ignore || defaultIgnore)
-
-  visitParents(tree, 'text', visitor)
 
   /** @type {import('unist-util-visit-parents').Visitor<Text>} */
   function visitor(node, parents) {
@@ -210,6 +103,71 @@ function search(tree, options, handler) {
     }
 
     return handler(node, grandparent)
+  }
+
+  /**
+   * @param {Text} node
+   * @param {Parent} parent
+   * @returns {VisitorResult}
+   */
+  function handler(node, parent) {
+    var find = pairs[pairIndex][0]
+    var replace = pairs[pairIndex][1]
+    /** @type {Array.<Content>} */
+    var nodes = []
+    var start = 0
+    var index = parent.children.indexOf(node)
+    /** @type {number} */
+    var position
+    /** @type {RegExpMatchArray} */
+    var match
+    /** @type {Array.<Content>|Content|string|false|undefined|null} */
+    var value
+
+    find.lastIndex = 0
+
+    match = find.exec(node.value)
+
+    while (match) {
+      position = match.index
+      // @ts-expect-error this is perfectly fine, typescript.
+      value = replace(...match, {index: match.index, input: match.input})
+
+      if (typeof value === 'string' && value.length > 0) {
+        value = {type: 'text', value}
+      }
+
+      if (value !== false) {
+        if (start !== position) {
+          nodes.push({type: 'text', value: node.value.slice(start, position)})
+        }
+
+        if (value) {
+          nodes = [].concat(nodes, value)
+        }
+
+        start = position + match[0].length
+      }
+
+      if (!find.global) {
+        break
+      }
+
+      match = find.exec(node.value)
+    }
+
+    if (position === undefined) {
+      nodes = [node]
+      index--
+    } else {
+      if (start < node.value.length) {
+        nodes.push({type: 'text', value: node.value.slice(start)})
+      }
+
+      parent.children.splice(index, 1, ...nodes)
+    }
+
+    return index + nodes.length + 1
   }
 }
 
