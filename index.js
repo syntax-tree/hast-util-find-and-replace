@@ -28,7 +28,7 @@
 
 /**
  * @callback ReplaceFunction
- * @param {...unknown} parameters
+ * @param {...any} parameters
  * @returns {Array.<Content>|Content|string|false|undefined|null}
  */
 
@@ -47,7 +47,7 @@ export const defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
  * @param {Options} [options]
  */
 export function findAndReplace(tree, find, replace, options) {
-  /** @type {Options} */
+  /** @type {Options|undefined} */
   let settings
   /** @type {FindAndReplaceSchema|FindAndReplaceList} */
   let schema
@@ -79,7 +79,7 @@ export function findAndReplace(tree, find, replace, options) {
   /** @type {import('unist-util-visit-parents').Visitor<Text>} */
   function visitor(node, parents) {
     let index = -1
-    /** @type {Parent} */
+    /** @type {Parent|undefined} */
     let grandparent
 
     while (++index < parents.length) {
@@ -100,7 +100,9 @@ export function findAndReplace(tree, find, replace, options) {
       grandparent = parent
     }
 
-    return handler(node, grandparent)
+    if (grandparent) {
+      return handler(node, grandparent)
+    }
   }
 
   /**
@@ -115,7 +117,7 @@ export function findAndReplace(tree, find, replace, options) {
     let index = parent.children.indexOf(node)
     /** @type {Array.<Content>} */
     let nodes = []
-    /** @type {number} */
+    /** @type {number|undefined} */
     let position
 
     find.lastIndex = 0
@@ -127,8 +129,8 @@ export function findAndReplace(tree, find, replace, options) {
       // @ts-expect-error this is perfectly fine, typescript.
       let value = replace(...match, {index: match.index, input: match.input})
 
-      if (typeof value === 'string' && value.length > 0) {
-        value = {type: 'text', value}
+      if (typeof value === 'string') {
+        value = value.length > 0 ? {type: 'text', value} : undefined
       }
 
       if (value !== false) {
@@ -136,8 +138,10 @@ export function findAndReplace(tree, find, replace, options) {
           nodes.push({type: 'text', value: node.value.slice(start, position)})
         }
 
-        if (value) {
-          nodes = [].concat(nodes, value)
+        if (Array.isArray(value)) {
+          nodes.push(...value)
+        } else if (value) {
+          nodes.push(value)
         }
 
         start = position + match[0].length
