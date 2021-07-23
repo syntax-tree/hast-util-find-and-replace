@@ -44,9 +44,7 @@ test('findAndReplace', (t) => {
     findAndReplace(
       create(),
       /em(\w+)is/,
-      (/** @type {string} */ _, /** @type {string} */ $1) => {
-        return '[' + $1 + ']'
-      }
+      (/** @type {string} */ _, /** @type {string} */ $1) => '[' + $1 + ']'
     ),
     h('p', [
       'Some ',
@@ -61,9 +59,21 @@ test('findAndReplace', (t) => {
   )
 
   t.deepEqual(
-    findAndReplace(create(), 'emphasis', () => {
-      return h('a', h('b', 'c'))
-    }),
+    findAndReplace(create(), 'emphasis', () => ''),
+    h('p', [
+      'Some ',
+      h('em'),
+      ', ',
+      h('strong', 'importance'),
+      ', and ',
+      h('code', 'code'),
+      '.'
+    ]),
+    'should work when given `replace` returns an empty string'
+  )
+
+  t.deepEqual(
+    findAndReplace(create(), 'emphasis', () => h('a', h('b', 'c'))),
     h('p', [
       'Some ',
       h('em', h('a', h('b', 'c'))),
@@ -74,6 +84,20 @@ test('findAndReplace', (t) => {
       '.'
     ]),
     'should work when given `replace` returns a node'
+  )
+
+  t.deepEqual(
+    findAndReplace(create(), 'emphasis', () => [h('a'), h('b', 'c')]),
+    h('p', [
+      'Some ',
+      h('em', [h('a'), h('b', 'c')]),
+      ', ',
+      h('strong', 'importance'),
+      ', and ',
+      h('code', 'code'),
+      '.'
+    ]),
+    'should work when given `replace` returns a list of nodes'
   )
 
   t.deepEqual(
@@ -233,9 +257,7 @@ test('findAndReplace', (t) => {
   )
 
   t.deepEqual(
-    findAndReplace(create(), 'and', () => {
-      return h('script', 'alert(1)')
-    }),
+    findAndReplace(create(), 'and', () => h('script', 'alert(1)')),
     h('p', [
       'Some ',
       h('em', 'emphasis'),
