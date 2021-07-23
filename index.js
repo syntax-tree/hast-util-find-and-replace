@@ -36,7 +36,7 @@ import {visitParents} from 'unist-util-visit-parents'
 import {convertElement} from 'hast-util-is-element'
 import escape from 'escape-string-regexp'
 
-var own = {}.hasOwnProperty
+const own = {}.hasOwnProperty
 
 export const defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
 
@@ -48,9 +48,9 @@ export const defaultIgnore = ['title', 'script', 'style', 'svg', 'math']
  */
 export function findAndReplace(tree, find, replace, options) {
   /** @type {Options} */
-  var settings
+  let settings
   /** @type {FindAndReplaceSchema|FindAndReplaceList} */
-  var schema
+  let schema
 
   if (typeof find === 'string' || find instanceof RegExp) {
     // @ts-expect-error don’t expect options twice.
@@ -66,9 +66,9 @@ export function findAndReplace(tree, find, replace, options) {
     settings = {}
   }
 
-  var ignored = convertElement(settings.ignore || defaultIgnore)
-  var pairs = toPairs(schema)
-  var pairIndex = -1
+  const ignored = convertElement(settings.ignore || defaultIgnore)
+  const pairs = toPairs(schema)
+  let pairIndex = -1
 
   while (++pairIndex < pairs.length) {
     visitParents(tree, 'text', visitor)
@@ -78,15 +78,12 @@ export function findAndReplace(tree, find, replace, options) {
 
   /** @type {import('unist-util-visit-parents').Visitor<Text>} */
   function visitor(node, parents) {
-    var index = -1
+    let index = -1
     /** @type {Parent} */
-    var parent
-    /** @type {Parent} */
-    var grandparent
+    let grandparent
 
     while (++index < parents.length) {
-      // @ts-expect-error hast vs. unist parent.
-      parent = parents[index]
+      const parent = parents[index]
 
       if (
         ignored(
@@ -99,6 +96,7 @@ export function findAndReplace(tree, find, replace, options) {
         return
       }
 
+      // @ts-expect-error hast vs. unist parent.
       grandparent = parent
     }
 
@@ -111,27 +109,23 @@ export function findAndReplace(tree, find, replace, options) {
    * @returns {VisitorResult}
    */
   function handler(node, parent) {
-    var find = pairs[pairIndex][0]
-    var replace = pairs[pairIndex][1]
+    const find = pairs[pairIndex][0]
+    const replace = pairs[pairIndex][1]
+    let start = 0
+    let index = parent.children.indexOf(node)
     /** @type {Array.<Content>} */
-    var nodes = []
-    var start = 0
-    var index = parent.children.indexOf(node)
+    let nodes = []
     /** @type {number} */
-    var position
-    /** @type {RegExpMatchArray} */
-    var match
-    /** @type {Array.<Content>|Content|string|false|undefined|null} */
-    var value
+    let position
 
     find.lastIndex = 0
 
-    match = find.exec(node.value)
+    let match = find.exec(node.value)
 
     while (match) {
       position = match.index
       // @ts-expect-error this is perfectly fine, typescript.
-      value = replace(...match, {index: match.index, input: match.input})
+      let value = replace(...match, {index: match.index, input: match.input})
 
       if (typeof value === 'string' && value.length > 0) {
         value = {type: 'text', value}
@@ -176,17 +170,16 @@ export function findAndReplace(tree, find, replace, options) {
  * @returns {Pairs}
  */
 function toPairs(schema) {
-  var index = -1
   /** @type {Pairs} */
-  var result = []
-  /** @type {string} */
-  var key
+  const result = []
 
   if (typeof schema !== 'object') {
     throw new TypeError('Expected array or object as schema')
   }
 
   if (Array.isArray(schema)) {
+    let index = -1
+
     while (++index < schema.length) {
       result.push([
         toExpression(schema[index][0]),
@@ -194,6 +187,9 @@ function toPairs(schema) {
       ])
     }
   } else {
+    /** @type {string} */
+    let key
+
     for (key in schema) {
       if (own.call(schema, key)) {
         result.push([toExpression(key), toFunction(schema[key])])
@@ -217,11 +213,5 @@ function toExpression(find) {
  * @returns {ReplaceFunction}
  */
 function toFunction(replace) {
-  return typeof replace === 'function' ? replace : returner
-
-  /** @type {ReplaceFunction} */
-  function returner() {
-    // @ts-expect-error it’s a string.
-    return replace
-  }
+  return typeof replace === 'function' ? replace : () => replace
 }

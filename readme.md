@@ -28,7 +28,7 @@ import {h} from 'hastscript'
 import {inspect} from 'unist-util-inspect'
 import {findAndReplace} from 'hast-util-find-and-replace'
 
-var tree = h('p', [
+const tree = h('p', [
   'Some ',
   h('em', 'emphasis'),
   ', ',

@@ -2,9 +2,9 @@ import test from 'tape'
 import {h} from 'hastscript'
 import {findAndReplace} from './index.js'
 
-test('findAndReplace', function (t) {
+test('findAndReplace', (t) => {
   t.throws(
-    function () {
+    () => {
       // @ts-expect-error runtime.
       findAndReplace(create(), true)
     },
@@ -44,7 +44,7 @@ test('findAndReplace', function (t) {
     findAndReplace(
       create(),
       /em(\w+)is/,
-      function (/** @type {string} */ _, /** @type {string} */ $1) {
+      (/** @type {string} */ _, /** @type {string} */ $1) => {
         return '[' + $1 + ']'
       }
     ),
@@ -61,7 +61,7 @@ test('findAndReplace', function (t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), 'emphasis', function () {
+    findAndReplace(create(), 'emphasis', () => {
       return h('a', h('b', 'c'))
     }),
     h('p', [
@@ -233,7 +233,7 @@ test('findAndReplace', function (t) {
   )
 
   t.deepEqual(
-    findAndReplace(create(), 'and', function () {
+    findAndReplace(create(), 'and', () => {
       return h('script', 'alert(1)')
     }),
     h('p', [
