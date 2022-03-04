@@ -126,7 +126,6 @@ export function findAndReplace(tree, find, replace, options) {
 
     while (match) {
       position = match.index
-      // @ts-expect-error this is perfectly fine, typescript.
       let value = replace(...match, {index: match.index, input: match.input})
 
       if (typeof value === 'string') {
