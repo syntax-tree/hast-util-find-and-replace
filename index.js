@@ -20,17 +20,17 @@
  * @typedef {string|ReplaceFunction} Replace
  *
  * @typedef {[Find, Replace]} FindAndReplaceTuple
- * @typedef {Object.<string, Replace>} FindAndReplaceSchema
- * @typedef {Array.<FindAndReplaceTuple>} FindAndReplaceList
+ * @typedef {Record<string, Replace>} FindAndReplaceSchema
+ * @typedef {Array<FindAndReplaceTuple>} FindAndReplaceList
  *
  * @typedef {[RegExp, ReplaceFunction]} Pair
- * @typedef {Array.<Pair>} Pairs
+ * @typedef {Array<Pair>} Pairs
  */
 
 /**
  * @callback ReplaceFunction
  * @param {...any} parameters
- * @returns {Array.<Content>|Content|string|false|undefined|null}
+ * @returns {Array<Content>|Content|string|false|undefined|null}
  */
 
 import {visitParents} from 'unist-util-visit-parents'
@@ -115,7 +115,7 @@ export function findAndReplace(tree, find, replace, options) {
     const replace = pairs[pairIndex][1]
     let start = 0
     let index = parent.children.indexOf(node)
-    /** @type {Array.<Content>} */
+    /** @type {Array<Content>} */
     let nodes = []
     /** @type {number|undefined} */
     let position
