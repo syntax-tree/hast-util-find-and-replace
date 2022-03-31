@@ -8,25 +8,64 @@
 [![Backers][backers-badge]][collective]
 [![Chat][chat-badge]][chat]
 
-[**hast**][hast] utility to find and replace text in a [*tree*][tree].
+[hast][] utility to find and replace things.
+
+## Contents
+
+*   [What is this?](#what-is-this)
+*   [When should I use this?](#when-should-i-use-this)
+*   [Install](#install)
+*   [Use](#use)
+*   [API](#api)
+    *   [`findAndReplace(tree, find, replace[, options])`](#findandreplacetree-find-replace-options)
+*   [Types](#types)
+*   [Compatibility](#compatibility)
+*   [Security](#security)
+*   [Related](#related)
+*   [Contribute](#contribute)
+*   [License](#license)
+
+## What is this?
+
+This package is a utility that lets you find patterns (`string`, `RegExp`) in
+text and replace them with nodes (such as elements).
+It’s aware of HTML (such as ignoring `<style>` and `<script>` by default).
+
+## When should I use this?
+
+This utility is typically useful when you have regexes and want to modify hast.
+One example is when you have some form of “mentions” (such as
+`/@([a-z][_a-z0-9])\b/gi`) and want to create links to persons from them.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
-Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
-
-[npm][]:
+This package is [ESM only][esm].
+In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 
 ```sh
 npm install hast-util-find-and-replace
+```
+
+In Deno with [`esm.sh`][esmsh]:
+
+```js
+import {findAndReplace} from 'https://esm.sh/hast-util-find-and-replace@4'
+```
+
+In browsers with [`esm.sh`][esmsh]:
+
+```html
+<script type="module">
+  import {findAndReplace} from 'https://esm.sh/hast-util-find-and-replace@4?bundle'
+</script>
 ```
 
 ## Use
 
 ```js
 import {h} from 'hastscript'
-import {inspect} from 'unist-util-inspect'
 import {findAndReplace} from 'hast-util-find-and-replace'
+import {inspect} from 'unist-util-inspect'
 
 const tree = h('p', [
   'Some ',
@@ -38,15 +77,17 @@ const tree = h('p', [
   '.'
 ])
 
-findAndReplace(tree, 'and', 'or')
-
-findAndReplace(tree, {emphasis: 'em', importance: 'strong'})
-
-findAndReplace(tree, {
-  code: function($0) {
-    return h('a', {href: '//example.com#' + $0}, $0)
-  }
-})
+findAndReplace(tree, [
+  [/and/gi, 'or'],
+  [/emphasis/gi, 'em'],
+  [/importance/gi, 'strong'],
+  [
+    /code/gi,
+    function ($0) {
+      return h('a', {href: '//example.com#' + $0}, $0)
+    }
+  ]
+])
 
 console.log(inspect(tree))
 ```
@@ -54,32 +95,37 @@ console.log(inspect(tree))
 Yields:
 
 ```txt
-element[9] [tagName="p"]
-├─ text: "Some "
-├─ element[1] [tagName="em"]
-│  └─ text: "em"
-├─ text: ", "
-├─ element[1] [tagName="strong"]
-│  └─ text: "strong"
-├─ text: ", "
-├─ text: "or"
-├─ text: " "
-├─ element[1] [tagName="code"]
-│  └─ element[1] [tagName="a"][properties={"href":"//example.com#code"}]
-│     └─ text: "code"
-└─ text: "."
+element<p>[9]
+│ properties: {}
+├─0 text "Some "
+├─1 element<em>[1]
+│   │ properties: {}
+│   └─0 text "em"
+├─2 text ", "
+├─3 element<strong>[1]
+│   │ properties: {}
+│   └─0 text "strong"
+├─4 text ", "
+├─5 text "or"
+├─6 text " "
+├─7 element<code>[1]
+│   │ properties: {}
+│   └─0 element<a>[1]
+│       │ properties: {"href":"//example.com#code"}
+│       └─0 text "code"
+└─8 text "."
 ```
 
 ## API
 
-This package exports the following identifiers: `findAndReplace`, `defaultIgnore`.
+This package exports the identifiers `findAndReplace` and `defaultIgnore`.
 There is no default export.
 
-### `findAndReplace(tree, find[, replace][, options])`
+### `findAndReplace(tree, find, replace[, options])`
 
-Find and replace text in a [**hast**][hast] [*tree*][tree].
-The algorithm searches the tree in [*preorder*][preorder] for complete values
-in [`Text`][text] nodes.
+Find patterns in a tree and replace them.
+The algorithm searches the tree in *[preorder][]* for complete values in
+[`Text`][text] nodes.
 Partial matches are not supported.
 
 ###### Signatures
@@ -90,43 +136,56 @@ Partial matches are not supported.
 ###### Parameters
 
 *   `tree` ([`Node`][node])
-    — [**hast**][hast] [*tree*][tree]
 *   `find` (`string` or `RegExp`)
-    — Value to find and remove.
-    When `string`, escaped and made into a global `RegExp`
+    — value to find and remove (`string`s are escaped and turned into a global
+    `RegExp`)
 *   `replace` (`string` or `Function`)
-    — Value to insert.
-    When `string`, turned into a [`Text`][text] node.
-    When `Function`, called with the results of calling `RegExp.exec` as
-    arguments, in which case it can return a [`Node`][node] or a `string` (which
-    is wrapped in a [`Text`][text] node), or `false` to not replace
-*   `search` (`Object` or `Array`)
-    — Perform multiple find-and-replaces.
-    When `Array`, each entry is a tuple (`Array`) of a `find` (at `0`) and
-    `replace` (at `1`).
-    When `Object`, each key is a `find` (in string form) and each value is a
-    `replace`
+    — value to insert.
+    `string`s are turned into a [`Text`][text] node,
+    `Function`s are called with the results of calling `RegExp.exec` as
+    arguments, and they can return a [`Node`][node], a `string` (which is
+    wrapped in a [`Text`][text] node), or `false` to not replace
+*   `search` (`Array` or `Object`)
+    — perform multiple find-and-replaces.
+    Either an `Array` of tuples (`Array`s) with `find` (at `0`) and `replace`
+    (at `1`), or an `Object` where each key is `find` and each value is
+    the corresponding `replace`
 *   `options.ignore` (`Test`, default: `['title', 'script', 'style', 'svg',
     'math']`)
-    — Any [`hast-util-is-element`][test] compatible test.
-    The default list is exported as `defaultIgnore`
+    — any [`hast-util-is-element`][test] compatible test (the default list is
+    exported as `defaultIgnore`)
 
 ###### Returns
 
-The given, modified, `tree`.
+The given `tree` ([`Node`][node]).
+
+## Types
+
+This package is fully typed with [TypeScript][].
+It exports the additional types `Find`, `Replace`, `ReplaceFunction`,
+`FindAndReplaceTuple`, `FindAndReplaceSchema`, `FindAndReplaceList`, and
+`Options`.
+
+## Compatibility
+
+Projects maintained by the unified collective are compatible with all maintained
+versions of Node.js.
+As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
+Our projects sometimes work with older versions, but this is not guaranteed.
 
 ## Security
 
-Improper use of the `replace` can open you up to a
-[cross-site scripting (XSS)][xss] attack as the value of `replace` is injected
-into the syntax tree.
+Use of `hast-util-find-and-replace` can open you up to a
+[cross-site scripting (XSS)][xss] attack if a value used to `replace` is unsafe.
+Use [`hast-util-santize`][hast-util-sanitize] to make the hast tree safe.
+
 The following example shows how a script is injected that runs when loaded in a
 browser.
 
 ```js
-findAndReplace(h('p', 'This and that.'), 'and', function() {
-  return h('script', 'alert(1)')
-})
+const tree = h('p', 'This and that.')
+
+findAndReplace(tree, 'and', () => h('script', 'alert(1)'))
 ```
 
 Yields:
@@ -135,23 +194,23 @@ Yields:
 <p>This <script>alert(1)</script> that.</p>
 ```
 
-Do not use user input in `replace` or use [`hast-util-santize`][sanitize].
-
 ## Related
 
 *   [`hast-util-select`](https://github.com/syntax-tree/hast-util-select)
     — `querySelector`, `querySelectorAll`, and `matches`
+*   [`mdast-util-find-and-replace`](https://github.com/syntax-tree/mdast-util-find-and-replace)
+    — find and replace in mdast
 *   [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
     — select unist nodes with CSS-like selectors
 
 ## Contribute
 
-See [`contributing.md` in `syntax-tree/.github`][contributing] for ways to get
-started.
+See [`contributing.md`][contributing] in [`syntax-tree/.github`][health] for
+ways to get started.
 See [`support.md`][support] for ways to get help.
 
 This project has a [code of conduct][coc].
-By interacting with this repository, organization, or community you agree to
+By interacting with this repository, organisation, or community you agree to
 abide by its terms.
 
 ## License
@@ -188,21 +247,27 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[typescript]: https://www.typescriptlang.org
+
 [license]: license
 
 [author]: https://wooorm.com
 
-[contributing]: https://github.com/syntax-tree/.github/blob/HEAD/contributing.md
+[health]: https://github.com/syntax-tree/.github
 
-[support]: https://github.com/syntax-tree/.github/blob/HEAD/support.md
+[contributing]: https://github.com/syntax-tree/.github/blob/main/contributing.md
 
-[coc]: https://github.com/syntax-tree/.github/blob/HEAD/code-of-conduct.md
+[support]: https://github.com/syntax-tree/.github/blob/main/support.md
+
+[coc]: https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md
 
 [hast]: https://github.com/syntax-tree/hast
 
 [node]: https://github.com/syntax-tree/hast#ndoes
-
-[tree]: https://github.com/syntax-tree/unist#tree
 
 [preorder]: https://github.com/syntax-tree/unist#preorder
 
@@ -210,6 +275,6 @@ abide by its terms.
 
 [xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
 
-[sanitize]: https://github.com/syntax-tree/hast-util-sanitize
+[hast-util-sanitize]: https://github.com/syntax-tree/hast-util-sanitize
 
 [test]: https://github.com/syntax-tree/hast-util-is-element#api
