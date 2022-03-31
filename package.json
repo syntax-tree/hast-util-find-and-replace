@@ -34,7 +34,7 @@
   "dependencies": {
     "escape-string-regexp": "^5.0.0",
     "hast-util-is-element": "^2.0.0",
-    "unist-util-visit-parents": "^4.0.0"
+    "unist-util-visit-parents": "^5.0.0"
   },
   "devDependencies": {
     "@types/tape": "^4.0.0",

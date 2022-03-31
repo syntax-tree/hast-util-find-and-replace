@@ -5,8 +5,9 @@
  * @typedef {import('hast').Text} Text
  * @typedef {import('hast').Parent} Parent
  * @typedef {import('hast').Root} Root
- * @typedef {import('hast').Element['children'][number]} Content
- * @typedef {Parent['children'][number]|Root} Node
+ * @typedef {import('hast').Element} Element
+ * @typedef {import('hast').Content} Content
+ * @typedef {Root|Content} Node
  *
  * @typedef {import('hast-util-is-element').Test} Test
  * @typedef {import('unist-util-visit-parents').VisitorResult} VisitorResult
@@ -76,10 +77,10 @@ export function findAndReplace(tree, find, replace, options) {
 
   return tree
 
-  /** @type {import('unist-util-visit-parents').Visitor<Text>} */
+  /** @type {import('unist-util-visit-parents/complex-types').BuildVisitor<Node, 'text'>} */
   function visitor(node, parents) {
     let index = -1
-    /** @type {Parent|undefined} */
+    /** @type {Root|Element|undefined} */
     let grandparent
 
     while (++index < parents.length) {
@@ -88,7 +89,7 @@ export function findAndReplace(tree, find, replace, options) {
       if (
         ignored(
           parent,
-          // @ts-expect-error hast vs. unist parent.
+          // @ts-expect-error: TS doesn’t understand but it’s perfect.
           grandparent ? grandparent.children.indexOf(parent) : undefined,
           grandparent
         )
@@ -96,7 +97,6 @@ export function findAndReplace(tree, find, replace, options) {
         return
       }
 
-      // @ts-expect-error hast vs. unist parent.
       grandparent = parent
     }
 
