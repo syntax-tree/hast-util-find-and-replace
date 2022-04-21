@@ -163,8 +163,8 @@ The given `tree` ([`Node`][node]).
 
 This package is fully typed with [TypeScript][].
 It exports the additional types `Find`, `Replace`, `ReplaceFunction`,
-`FindAndReplaceTuple`, `FindAndReplaceSchema`, `FindAndReplaceList`, and
-`Options`.
+`FindAndReplaceTuple`, `FindAndReplaceSchema`, `FindAndReplaceList`,
+`RegExpMatchObject`, and `Options`.
 
 ## Compatibility
 
