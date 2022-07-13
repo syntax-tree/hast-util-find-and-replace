@@ -216,6 +216,18 @@ test('findAndReplace', (t) => {
   )
 
   t.deepEqual(
+    findAndReplace(h('p', 'aaa bbb'), [
+      [
+        /\b\w+\b/g,
+        function (/** @type {string} */ value) {
+          return value === 'aaa' ? h('strong', value) : false
+        }
+      ]
+    ]),
+    h('p', [h('strong', 'aaa'), ' bbb']),
+    'should support a match, and then a `false`'
+  )
+  t.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), [
       [
         /importance/g,
