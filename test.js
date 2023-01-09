@@ -1,9 +1,10 @@
-import test from 'tape'
+import assert from 'node:assert/strict'
+import test from 'node:test'
 import {h} from 'hastscript'
 import {findAndReplace} from './index.js'
 
-test('findAndReplace', (t) => {
-  t.throws(
+test('findAndReplace', () => {
+  assert.throws(
     () => {
       // @ts-expect-error runtime.
       findAndReplace(create(), true)
@@ -12,7 +13,7 @@ test('findAndReplace', (t) => {
     'should throw on invalid search and replaces'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'emphasis'),
     h('p', [
       'Some ',
@@ -26,7 +27,7 @@ test('findAndReplace', (t) => {
     'should remove without `replace`'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'emphasis', '!!!'),
     h('p', [
       'Some ',
@@ -40,7 +41,7 @@ test('findAndReplace', (t) => {
     'should work when given `find` and `replace`'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(
       create(),
       /em(\w+)is/,
@@ -58,7 +59,7 @@ test('findAndReplace', (t) => {
     'should work when given `find` as a `RegExp` and `replace` as a `Function`'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'emphasis', () => ''),
     h('p', [
       'Some ',
@@ -72,7 +73,7 @@ test('findAndReplace', (t) => {
     'should work when given `replace` returns an empty string'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'emphasis', () => h('a', h('b', 'c'))),
     h('p', [
       'Some ',
@@ -86,7 +87,7 @@ test('findAndReplace', (t) => {
     'should work when given `replace` returns a node'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'emphasis', () => [h('a'), h('b', 'c')]),
     h('p', [
       'Some ',
@@ -100,7 +101,7 @@ test('findAndReplace', (t) => {
     'should work when given `replace` returns a list of nodes'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), [
       ['emphasis', '!!!'],
       ['importance', '???']
@@ -117,7 +118,7 @@ test('findAndReplace', (t) => {
     'should work when given `search` as an matrix of strings'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), {code: 'hacks', ',': '!'}),
     h('p', [
       'Some ',
@@ -133,7 +134,7 @@ test('findAndReplace', (t) => {
     'should work when given `search` as an object of strings'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), /\Bmp\B/, '[MP]'),
     h('p', [
       'Some ',
@@ -147,7 +148,7 @@ test('findAndReplace', (t) => {
     'should work on partial matches'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), {
       emphasis() {
         return h('a', 'importance')
@@ -166,7 +167,7 @@ test('findAndReplace', (t) => {
     'should find-and-replace recursively'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(
       h('p', [
         'Some ',
@@ -193,13 +194,13 @@ test('findAndReplace', (t) => {
     'should ignore from options'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'emphasis', () => false),
     create(),
     'should not replace when returning `false`'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), {
       importance(/** @type {string} */ match) {
         return h('strong', match)
@@ -215,7 +216,7 @@ test('findAndReplace', (t) => {
     'should not be order-sensitive with strings'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(h('p', 'aaa bbb'), [
       [
         /\b\w+\b/g,
@@ -227,7 +228,7 @@ test('findAndReplace', (t) => {
     h('p', [h('strong', 'aaa'), ' bbb']),
     'should support a match, and then a `false`'
   )
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(h('p', 'Some emphasis, importance, and code.'), [
       [
         /importance/g,
@@ -252,7 +253,7 @@ test('findAndReplace', (t) => {
     'should not be order-sensitive with regexes'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'and', 'alert(1)'),
     h('p', [
       'Some ',
@@ -268,7 +269,7 @@ test('findAndReplace', (t) => {
     'security: replacer as string (safe)'
   )
 
-  t.deepEqual(
+  assert.deepEqual(
     findAndReplace(create(), 'and', () => h('script', 'alert(1)')),
     h('p', [
       'Some ',
@@ -283,8 +284,6 @@ test('findAndReplace', (t) => {
     ]),
     'security: replacer as function (unsafe)'
   )
-
-  t.end()
 })
 
 function create() {
