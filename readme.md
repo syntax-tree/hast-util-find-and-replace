@@ -17,8 +17,8 @@
 *   [Install](#install)
 *   [Use](#use)
 *   [API](#api)
-    *   [`findAndReplace(tree, find, replace[, options])`](#findandreplacetree-find-replace-options)
     *   [`defaultIgnore`](#defaultignore)
+    *   [`findAndReplace(tree, find, replace[, options])`](#findandreplacetree-find-replace-options)
     *   [`Find`](#find)
     *   [`FindAndReplaceList`](#findandreplacelist)
     *   [`FindAndReplaceSchema`](#findandreplaceschema)
@@ -49,7 +49,7 @@ One example is when you have some form of “mentions” (such as
 ## Install
 
 This package is [ESM only][esm].
-In Node.js (version 14.14+ and or 16.0+), install with [npm][]:
+In Node.js (version 16+), install with [npm][]:
 
 ```sh
 npm install hast-util-find-and-replace
@@ -127,9 +127,15 @@ element<p>[9]
 
 ## API
 
-This package exports the identifiers [`defaultIgnore`][defaultignore] and
-[`findAndReplace`][findandreplace].
+This package exports the identifiers [`defaultIgnore`][api-default-ignore] and
+[`findAndReplace`][api-find-and-replace].
 There is no default export.
+
+### `defaultIgnore`
+
+Default tag names to ignore (`Array<string>`).
+
+The defaults are `math`, `script`, `style`, `svg`, and `title`.
 
 ### `findAndReplace(tree, find, replace[, options])`
 
@@ -148,31 +154,19 @@ Partial matches are not supported.
 
 *   `tree` ([`Node`][node])
     — tree to change
-*   `find` ([`Find`][find])
+*   `find` ([`Find`][api-find])
     — value to find and remove
-*   `replace` ([`Replace`][replace])
+*   `replace` ([`Replace`][api-replace])
     — thing to replace with
-*   `search` ([`FindAndReplaceSchema`][findandreplaceschema] or
-    [`FindAndReplaceList`][findandreplacelist])
+*   `search` ([`FindAndReplaceSchema`][api-find-and-replace-schema] or
+    [`FindAndReplaceList`][api-find-and-replace-list])
     — several find and replaces
-*   `options` ([`Options`][options])
+*   `options` ([`Options`][api-options])
     — configuration
 
 ###### Returns
 
 Nothing (`undefined`).
-
-### `defaultIgnore`
-
-Default tag names to ignore.
-
-The defaults are `math`, `script`, `style`, `svg`, and `title`.
-
-###### Type
-
-```ts
-type defaultIgnore = Array<string>
-```
 
 ### `Find`
 
@@ -183,7 +177,7 @@ Strings are escaped and then turned into global expressions.
 ###### Type
 
 ```ts
-type Find = string | RegExp
+type Find = RegExp | string
 ```
 
 ### `FindAndReplaceList`
@@ -196,7 +190,7 @@ Several find and replaces, in array form (TypeScript type).
 type FindAndReplaceList = Array<FindAndReplaceTuple>
 ```
 
-See [`FindAndReplaceTuple`][findandreplacetuple].
+See [`FindAndReplaceTuple`][api-find-and-replace-tuple].
 
 ### `FindAndReplaceSchema`
 
@@ -208,7 +202,7 @@ Several find and replaces, in object form (TypeScript type).
 type FindAndReplaceSchema = Record<string, Replace>
 ```
 
-See [`Replace`][replace].
+See [`Replace`][api-replace].
 
 ### `FindAndReplaceTuple`
 
@@ -220,7 +214,7 @@ Find and replace in tuple form (TypeScript type).
 type FindAndReplaceTuple = [Find, Replace]
 ```
 
-See [`Find`][find] and [`Replace`][replace].
+See [`Find`][api-find] and [`Replace`][api-replace].
 
 ### `Options`
 
@@ -251,10 +245,10 @@ Thing to replace with (TypeScript type).
 ###### Type
 
 ```ts
-type Replace = string | ReplaceFunction
+type Replace = ReplaceFunction | string
 ```
 
-See [`ReplaceFunction`][replacefunction].
+See [`ReplaceFunction`][api-replace-function].
 
 ### `ReplaceFunction`
 
@@ -268,7 +262,7 @@ The parameters are the result of corresponding search expression:
     — whole match
 *   `...capture` (`Array<string>`)
     — matches from regex capture groups
-*   `match` ([`RegExpMatchObject`][regexpmatchobject])
+*   `match` ([`RegExpMatchObject`][api-regexp-match-object])
     — info on the match
 
 ###### Returns
@@ -278,26 +272,29 @@ Thing to replace with:
 *   when `null`, `undefined`, `''`, remove the match
 *   …or when `false`, do not replace at all
 *   …or when `string`, replace with a text node of that value
-*   …or when `Node` or `Array<Node>`, replace with those nodes
+*   …or when `Array<Node>` or `Node`, replace with those nodes
 
 ## Types
 
 This package is fully typed with [TypeScript][].
-It exports the additional types [`Find`][find],
-[`FindAndReplaceList`][findandreplacelist],
-[`FindAndReplaceSchema`][findandreplaceschema],
-[`FindAndReplaceTuple`][findandreplacetuple],
-[`Options`][options],
-[`RegExpMatchObject`][regexpmatchobject],
-[`Replace`][replace], and
-[`ReplaceFunction`][replacefunction].
+It exports the additional types [`Find`][api-find],
+[`FindAndReplaceList`][api-find-and-replace-list],
+[`FindAndReplaceSchema`][api-find-and-replace-schema],
+[`FindAndReplaceTuple`][api-find-and-replace-tuple],
+[`Options`][api-options],
+[`RegExpMatchObject`][api-regexp-match-object],
+[`Replace`][api-replace], and
+[`ReplaceFunction`][api-replace-function].
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 14.14+ and 16.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line,
+`hast-util-find-and-replace@^4`, compatible with Node.js 12.
 
 ## Security
 
@@ -359,9 +356,9 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/hast-util-find-and-replace
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/hast-util-find-and-replace.svg
+[size-badge]: https://img.shields.io/badge/dynamic/json?label=minzipped%20size&query=$.size.compressedSize&url=https://deno.bundlejs.com/?q=hast-util-find-and-replace
 
-[size]: https://bundlephobia.com/result?p=hast-util-find-and-replace
+[size]: https://bundlejs.com/?q=hast-util-find-and-replace
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -407,22 +404,22 @@ abide by its terms.
 
 [test]: https://github.com/syntax-tree/hast-util-is-element#test
 
-[defaultignore]: #defaultignore
+[api-default-ignore]: #defaultignore
 
-[findandreplace]: #findandreplacetree-find-replace-options
+[api-find-and-replace]: #findandreplacetree-find-replace-options
 
-[options]: #options
+[api-options]: #options
 
-[find]: #find
+[api-find]: #find
 
-[replace]: #replace
+[api-replace]: #replace
 
-[replacefunction]: #replacefunction
+[api-replace-function]: #replacefunction
 
-[findandreplacelist]: #findandreplacelist
+[api-find-and-replace-list]: #findandreplacelist
 
-[findandreplaceschema]: #findandreplaceschema
+[api-find-and-replace-schema]: #findandreplaceschema
 
-[findandreplacetuple]: #findandreplacetuple
+[api-find-and-replace-tuple]: #findandreplacetuple
 
-[regexpmatchobject]: #regexpmatchobject
+[api-regexp-match-object]: #regexpmatchobject
