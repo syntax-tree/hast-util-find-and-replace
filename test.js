@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {h} from 'hastscript'
-import {findAndReplace} from './index.js'
+import {findAndReplace} from 'hast-util-find-and-replace'
 
 test('findAndReplace', async function (t) {
   await t.test('should expose the public api', async function () {
-    assert.deepEqual(Object.keys(await import('./index.js')).sort(), [
-      'defaultIgnore',
-      'findAndReplace'
-    ])
+    assert.deepEqual(
+      Object.keys(await import('hast-util-find-and-replace')).sort(),
+      ['defaultIgnore', 'findAndReplace']
+    )
   })
 
   await t.test(
