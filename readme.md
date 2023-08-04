@@ -57,14 +57,14 @@ npm install hast-util-find-and-replace
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import {findAndReplace} from 'https://esm.sh/hast-util-find-and-replace@4'
+import {findAndReplace} from 'https://esm.sh/hast-util-find-and-replace@5'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import {findAndReplace} from 'https://esm.sh/hast-util-find-and-replace@4?bundle'
+  import {findAndReplace} from 'https://esm.sh/hast-util-find-and-replace@5?bundle'
 </script>
 ```
 
