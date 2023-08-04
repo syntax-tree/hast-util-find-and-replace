@@ -311,7 +311,9 @@ browser.
 ```js
 const tree = h('p', 'This and that.')
 
-findAndReplace(tree, 'and', () => h('script', 'alert(1)'))
+findAndReplace(tree, 'and', function () {
+  return h('script', 'alert(1)')
+})
 ```
 
 Yields:
