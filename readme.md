@@ -160,7 +160,7 @@ Partial matches are not supported.
 
 ###### Returns
 
-Given, modified, tree ([`Node`][node]).
+Nothing (`undefined`).
 
 ### `defaultIgnore`
 
