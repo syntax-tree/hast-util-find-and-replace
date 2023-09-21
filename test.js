@@ -1,3 +1,7 @@
+/**
+ * @typedef {import('hast').Root} Root
+ */
+
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {h} from 'hastscript'
@@ -288,6 +292,35 @@ test('findAndReplace', async function (t) {
     ])
 
     assert.deepEqual(tree, create())
+  })
+
+  await t.test('should not treat `false` as a match', async function () {
+    /** @type {Root} */
+    const tree = {type: 'root', children: [{type: 'text', value: ':1:2:'}]}
+
+    findAndReplace(tree, [
+      /:(\d+):/g,
+      /**
+       * @param {string} _
+       * @param {string} $1
+       */
+      function (_, $1) {
+        return $1 === '2' ? h('strong', $1) : false
+      }
+    ])
+
+    assert.deepEqual(tree, {
+      type: 'root',
+      children: [
+        {type: 'text', value: ':1'},
+        {
+          type: 'element',
+          tagName: 'strong',
+          properties: {},
+          children: [{type: 'text', value: '2'}]
+        }
+      ]
+    })
   })
 
   await t.test('should not be order-sensitive with strings', async function () {
