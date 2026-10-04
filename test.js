@@ -18,8 +18,9 @@ test('findAndReplace', async function (t) {
   await t.test(
     'should throw on invalid search and replaces',
     async function () {
+      const tree = create()
+
       assert.throws(function () {
-        const tree = create()
         // @ts-expect-error: check that the runtime throws an error.
         findAndReplace(tree, true)
       }, /Expected find and replace tuple or list of tuples/)
@@ -301,8 +302,12 @@ test('findAndReplace', async function (t) {
     findAndReplace(tree, [
       /:(\d+):/g,
       /**
+       * Turn `:2:` into strong, leave others.
+       *
        * @param {string} _
+       *   Whole match.
        * @param {string} $1
+       *   Number.
        */
       function (_, $1) {
         return $1 === '2' ? h('strong', $1) : false

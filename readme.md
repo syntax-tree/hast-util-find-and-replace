@@ -12,26 +12,26 @@
 
 ## Contents
 
-*   [What is this?](#what-is-this)
-*   [When should I use this?](#when-should-i-use-this)
-*   [Install](#install)
-*   [Use](#use)
-*   [API](#api)
-    *   [`defaultIgnore`](#defaultignore)
-    *   [`findAndReplace(tree, list[, options])`](#findandreplacetree-list-options)
-    *   [`Find`](#find)
-    *   [`FindAndReplaceList`](#findandreplacelist)
-    *   [`FindAndReplaceTuple`](#findandreplacetuple)
-    *   [`Options`](#options)
-    *   [`RegExpMatchObject`](#regexpmatchobject)
-    *   [`Replace`](#replace)
-    *   [`ReplaceFunction`](#replacefunction)
-*   [Types](#types)
-*   [Compatibility](#compatibility)
-*   [Security](#security)
-*   [Related](#related)
-*   [Contribute](#contribute)
-*   [License](#license)
+* [What is this?](#what-is-this)
+* [When should I use this?](#when-should-i-use-this)
+* [Install](#install)
+* [Use](#use)
+* [API](#api)
+  * [`defaultIgnore`](#defaultignore)
+  * [`findAndReplace(tree, list[, options])`](#findandreplacetree-list-options)
+  * [`Find`](#find)
+  * [`FindAndReplaceList`](#findandreplacelist)
+  * [`FindAndReplaceTuple`](#findandreplacetuple)
+  * [`Options`](#options)
+  * [`RegExpMatchObject`](#regexpmatchobject)
+  * [`Replace`](#replace)
+  * [`ReplaceFunction`](#replacefunction)
+* [Types](#types)
+* [Compatibility](#compatibility)
+* [Security](#security)
+* [Related](#related)
+* [Contribute](#contribute)
+* [License](#license)
 
 ## What is this?
 
@@ -102,7 +102,7 @@ console.log(inspect(tree))
 
 Yields:
 
-```txt
+```text
 element<p>[9]
 │ properties: {}
 ├─0 text "Some "
@@ -146,13 +146,13 @@ Partial matches are not supported.
 
 ###### Parameters
 
-*   `tree` ([`Node`][node])
-    — tree to change
-*   `list` ([`FindAndReplaceList`][api-find-and-replace-list] or
-    [`FindAndReplaceTuple`][api-find-and-replace-tuple])
-    — one or more find-and-replace pairs
-*   `options` ([`Options`][api-options])
-    — configuration
+* `tree` ([`Node`][node])
+  — tree to change
+* `list` ([`FindAndReplaceList`][api-find-and-replace-list] or
+  [`FindAndReplaceTuple`][api-find-and-replace-tuple])
+  — one or more find-and-replace pairs
+* `options` ([`Options`][api-options])
+  — configuration
 
 ###### Returns
 
@@ -200,8 +200,8 @@ Configuration (TypeScript type).
 
 ###### Fields
 
-*   `ignore` ([`Test`][test], optional)
-    — test for which elements to ignore
+* `ignore` ([`Test`][test], optional)
+  — test for which elements to ignore
 
 ### `RegExpMatchObject`
 
@@ -209,12 +209,12 @@ Info on the match (TypeScript type).
 
 ###### Fields
 
-*   `index` (`number`)
-    — the index of the search at which the result was found
-*   `input` (`string`)
-    — a copy of the search string in the text node
-*   `stack` ([`Array<Node>`][node])
-    — all ancestors of the text node, where the last node is the text itself
+* `index` (`number`)
+  — the index of the search at which the result was found
+* `input` (`string`)
+  — a copy of the search string in the text node
+* `stack` ([`Array<Node>`][node])
+  — all ancestors of the text node, where the last node is the text itself
 
 ### `Replace`
 
@@ -236,21 +236,21 @@ Callback called when a search matches (TypeScript type).
 
 The parameters are the result of corresponding search expression:
 
-*   `value` (`string`)
-    — whole match
-*   `...capture` (`Array<string>`)
-    — matches from regex capture groups
-*   `match` ([`RegExpMatchObject`][api-regexp-match-object])
-    — info on the match
+* `value` (`string`)
+  — whole match
+* `...capture` (`Array<string>`)
+  — matches from regex capture groups
+* `match` ([`RegExpMatchObject`][api-regexp-match-object])
+  — info on the match
 
 ###### Returns
 
 Thing to replace with:
 
-*   when `null`, `undefined`, `''`, remove the match
-*   …or when `false`, do not replace at all
-*   …or when `string`, replace with a text node of that value
-*   …or when `Array<Node>` or `Node`, replace with those nodes
+* when `null`, `undefined`, `''`, remove the match
+* …or when `false`, do not replace at all
+* …or when `string`, replace with a text node of that value
+* …or when `Array<Node>` or `Node`, replace with those nodes
 
 ## Types
 
@@ -298,12 +298,12 @@ Yields:
 
 ## Related
 
-*   [`hast-util-select`](https://github.com/syntax-tree/hast-util-select)
-    — `querySelector`, `querySelectorAll`, and `matches`
-*   [`mdast-util-find-and-replace`](https://github.com/syntax-tree/mdast-util-find-and-replace)
-    — find and replace in mdast
-*   [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
-    — select unist nodes with CSS-like selectors
+* [`hast-util-select`](https://github.com/syntax-tree/hast-util-select)
+  — `querySelector`, `querySelectorAll`, and `matches`
+* [`mdast-util-find-and-replace`](https://github.com/syntax-tree/mdast-util-find-and-replace)
+  — find and replace in mdast
+* [`unist-util-select`](https://github.com/syntax-tree/unist-util-select)
+  — select unist nodes with CSS-like selectors
 
 ## Contribute
 
@@ -321,80 +321,80 @@ abide by its terms.
 
 <!-- Definition -->
 
-[build-badge]: https://github.com/syntax-tree/hast-util-find-and-replace/workflows/main/badge.svg
-
-[build]: https://github.com/syntax-tree/hast-util-find-and-replace/actions
-
-[coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/hast-util-find-and-replace.svg
-
-[coverage]: https://codecov.io/github/syntax-tree/hast-util-find-and-replace
-
-[downloads-badge]: https://img.shields.io/npm/dm/hast-util-find-and-replace.svg
-
-[downloads]: https://www.npmjs.com/package/hast-util-find-and-replace
-
-[size-badge]: https://img.shields.io/badge/dynamic/json?label=minzipped%20size&query=$.size.compressedSize&url=https://deno.bundlejs.com/?q=hast-util-find-and-replace
-
-[size]: https://bundlejs.com/?q=hast-util-find-and-replace
-
-[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
-
-[backers-badge]: https://opencollective.com/unified/backers/badge.svg
-
-[collective]: https://opencollective.com/unified
-
-[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
-
-[chat]: https://github.com/syntax-tree/unist/discussions
-
-[npm]: https://docs.npmjs.com/cli/install
-
-[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-
-[esmsh]: https://esm.sh
-
-[typescript]: https://www.typescriptlang.org
-
-[license]: license
-
-[author]: https://wooorm.com
-
-[health]: https://github.com/syntax-tree/.github
-
-[contributing]: https://github.com/syntax-tree/.github/blob/main/contributing.md
-
-[support]: https://github.com/syntax-tree/.github/blob/main/support.md
-
-[coc]: https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md
-
-[hast]: https://github.com/syntax-tree/hast
-
-[node]: https://github.com/syntax-tree/hast#ndoes
-
-[preorder]: https://github.com/syntax-tree/unist#preorder
-
-[text]: https://github.com/syntax-tree/hast#text
-
-[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
-
-[hast-util-sanitize]: https://github.com/syntax-tree/hast-util-sanitize
-
-[test]: https://github.com/syntax-tree/hast-util-is-element#test
-
 [api-default-ignore]: #defaultignore
-
-[api-find-and-replace]: #findandreplacetree-list-options
-
-[api-options]: #options
 
 [api-find]: #find
 
-[api-replace]: #replace
-
-[api-replace-function]: #replacefunction
+[api-find-and-replace]: #findandreplacetree-list-options
 
 [api-find-and-replace-list]: #findandreplacelist
 
 [api-find-and-replace-tuple]: #findandreplacetuple
 
+[api-options]: #options
+
 [api-regexp-match-object]: #regexpmatchobject
+
+[api-replace]: #replace
+
+[api-replace-function]: #replacefunction
+
+[author]: https://wooorm.com
+
+[backers-badge]: https://opencollective.com/unified/backers/badge.svg
+
+[build]: https://github.com/syntax-tree/hast-util-find-and-replace/actions
+
+[build-badge]: https://github.com/syntax-tree/hast-util-find-and-replace/workflows/main/badge.svg
+
+[chat]: https://github.com/syntax-tree/unist/discussions
+
+[chat-badge]: https://img.shields.io/badge/chat-discussions-success.svg
+
+[coc]: https://github.com/syntax-tree/.github/blob/main/code-of-conduct.md
+
+[collective]: https://opencollective.com/unified
+
+[contributing]: https://github.com/syntax-tree/.github/blob/main/contributing.md
+
+[coverage]: https://codecov.io/github/syntax-tree/hast-util-find-and-replace
+
+[coverage-badge]: https://img.shields.io/codecov/c/github/syntax-tree/hast-util-find-and-replace.svg
+
+[downloads]: https://www.npmjs.com/package/hast-util-find-and-replace
+
+[downloads-badge]: https://img.shields.io/npm/dm/hast-util-find-and-replace.svg
+
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
+[esmsh]: https://esm.sh
+
+[hast]: https://github.com/syntax-tree/hast
+
+[hast-util-sanitize]: https://github.com/syntax-tree/hast-util-sanitize
+
+[health]: https://github.com/syntax-tree/.github
+
+[license]: license
+
+[node]: https://github.com/syntax-tree/hast#ndoes
+
+[npm]: https://docs.npmjs.com/cli/install
+
+[preorder]: https://github.com/syntax-tree/unist#preorder
+
+[size]: https://bundlejs.com/?q=hast-util-find-and-replace
+
+[size-badge]: https://img.shields.io/badge/dynamic/json?label=minzipped%20size&query=$.size.compressedSize&url=https://deno.bundlejs.com/?q=hast-util-find-and-replace
+
+[sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
+
+[support]: https://github.com/syntax-tree/.github/blob/main/support.md
+
+[test]: https://github.com/syntax-tree/hast-util-is-element#test
+
+[text]: https://github.com/syntax-tree/hast#text
+
+[typescript]: https://www.typescriptlang.org
+
+[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
