@@ -218,9 +218,9 @@ test('findAndReplace', async function (t) {
       tree,
       h('p', [
         'Some ',
-        h('em', ['e', '[MP]', 'hasis']),
+        h('em', 'e[MP]hasis'),
         ', ',
-        h('strong', ['i', '[MP]', 'ortance']),
+        h('strong', 'i[MP]ortance'),
         ', and ',
         h('code', 'code'),
         '.'
@@ -411,13 +411,27 @@ test('findAndReplace', async function (t) {
           h('em', 'emphasis'),
           ', ',
           h('strong', 'importance'),
-          ', ',
-          'alert(1)',
-          ' ',
+          ', alert(1) ',
           h('code', 'code'),
           '.'
         ])
       )
+    }
+  )
+
+  await t.test(
+    'should merge returned text with adjacent text',
+    async function () {
+      const tree = h('p', 'a b. c')
+
+      findAndReplace(tree, [
+        /b\./,
+        function () {
+          return [h('strong', 'b'), {type: 'text', value: '.'}]
+        }
+      ])
+
+      assert.deepEqual(tree, h('p', ['a ', h('strong', 'b'), '. c']))
     }
   )
 

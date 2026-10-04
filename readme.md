@@ -103,7 +103,7 @@ console.log(inspect(tree))
 Yields:
 
 ```text
-element<p>[9]
+element<p>[7]
 │ properties: {}
 ├─0 text "Some "
 ├─1 element<em>[1]
@@ -113,15 +113,13 @@ element<p>[9]
 ├─3 element<strong>[1]
 │   │ properties: {}
 │   └─0 text "strong"
-├─4 text ", "
-├─5 text "or"
-├─6 text " "
-├─7 element<code>[1]
+├─4 text ", or "
+├─5 element<code>[1]
 │   │ properties: {}
 │   └─0 element<a>[1]
 │       │ properties: {"href":"//example.com#code"}
 │       └─0 text "code"
-└─8 text "."
+└─6 text "."
 ```
 
 ## API
