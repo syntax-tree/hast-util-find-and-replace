@@ -1,5 +1,5 @@
 /**
- * @import {Root} from 'hast'
+ * @import {Root, Text} from 'hast'
  */
 
 import assert from 'node:assert/strict'
@@ -208,6 +208,15 @@ test('findAndReplace', async function (t) {
       assert.deepEqual(tree, create())
     }
   )
+
+  await t.test('should not change a text node as the tree', async function () {
+    /** @type {Text} */
+    const tree = {type: 'text', value: 'Some emphasis'}
+
+    findAndReplace(tree, ['emphasis', '!!!'])
+
+    assert.deepEqual(tree, {type: 'text', value: 'Some emphasis'})
+  })
 
   await t.test('should work on partial matches', async function () {
     const tree = create()
